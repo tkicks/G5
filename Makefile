@@ -3,8 +3,8 @@ CLIBS= 		-lm -lglut -lGL -lGLU -lX11 -pthread # 2014
 CPATHS=		-I/usr/include -L/usr/lib # 2014
 CFLAGS=		$(CPATHS)$(CLIBS)
 
-Kickham_Gillis_G5:		Kickham_Gillis_G5.cpp
-		g++ Kickham_Gillis_G5.cpp -o Kickham_Gillis_G5 $(CFLAGS)
+Kickham_Gillis_G5:		Kickham_Gillis_G5.cpp glm.c
+		g++ glm.c Kickham_Gillis_G5.cpp -o Kickham_Gillis_G5 $(CFLAGS)
 
 clean:
 		rm *.o
