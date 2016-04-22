@@ -16,6 +16,9 @@ Output:
 #include <stack>
 #include <math.h>
 #include "glm.h"
+#include <pthread.h>
+GLenum rgb;					// for tkmap.c
+#include "tkmap.c"
 
 using namespace std;
 
@@ -41,36 +44,26 @@ const int minZoom = -14;
 
 void* simpleFunc(void*) { return NULL; }
 void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
+void initMenu();
+void menu(int menuVal);
+void printInstructions();
 
 class Scene{
 
 public:
 	 
-	 Scene () {};  // constructor
+	 Scene () {wireframe = false; smoothShading = true;};  // constructor
 
 	 // void zRotation(int direction);
-	 
-	 void drawVertical();
-	 void drawAngled(int direction);
 
 	 vector< vector<float> > vertices;
-	 vector<char> plant;
-	 vector<float>currP;
-	 float objHeight;    // height of cylinders (branches)
-	 float objRadius;    // radius of cylinders (branches)
-	 float angle;        // angle to rotate branches by
-	 int n;					// number of iterations
-	 int grammarNum;		// which grammar
+	 bool textures;
+	 bool wireframe;
+	 bool smoothShading;
 	 int zoom;
-	 bool leafing;			// if drawing a leaf
-	 bool branching;		// if drawing a branch
-
-	 float startY;   //Coords for the top of the first cylinder drawn (0,startY,0) so only need var for startY 
-
-	 stack<vector<float> > knots; //Coords for the places to pop back to
 };
 
-Scene fractal;
+Scene scene;
 
 /************************Class Methods***************************/
 
@@ -114,7 +107,7 @@ void drawScene(void)
 	glLoadIdentity ();
 
 
-	//--------------------------END Fractal VIEWPORT---------------------------
+	//--------------------------END scene VIEWPORT---------------------------
 
 	alCapone = glmReadOBJ("al.obj");
 
@@ -126,7 +119,10 @@ void drawScene(void)
 		glTranslatef(1.0, -0.5, 0.0);
 		glScalef(0.5, 0.5, 0.5);
 		glRotatef(-90, 0, 1, 0);
-		glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
+		if (scene.smoothShading)
+			glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
+		else
+			glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
 	glPopMatrix();
 	glutSwapBuffers();
 }
@@ -153,12 +149,62 @@ void resize(int w, int h)
 	height = h;
 }
 
-// Mouse input processing routine.
-void mouse (int button, int state, int x, int y)
+void initMenu()
+// INPUT: none	OUTPUT: none
+// initiate the menu on mouse click
 {
-	// if (state == GLUT_DOWN) {
-	// 	cout << "mouse click do menu\n";
-	// }
+	// create menu and add options to it
+	glutCreateMenu(menu);						// call menu function
+	glutAddMenuEntry("Toggle Textures On/Off", 0);
+	glutAddMenuEntry("Toggle Wireframe On/Off", 1);
+	glutAddMenuEntry("Toggle Smooth/Flat Shading", 2);
+	glutAddMenuEntry("Quit", 3);
+	glutAttachMenu(GLUT_LEFT_BUTTON);			// attach menu to left click action
+}
+
+void menu (int menuVal)
+// INPUT: value of menu option clicked	OUTPUT: none
+// what each item in the menu does based on assigned value
+{
+	// toggle objects based on menu value selected
+	switch (menuVal) {
+		case 0: if (scene.textures) // cout << "toggle smooth/flat shading function call\n";
+				{
+					scene.textures = false;
+					glutPostRedisplay();
+				}
+				else
+				{
+					scene.textures = true;
+					glutPostRedisplay();
+				}
+				break;
+		case 1: if (scene.wireframe)
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					glutPostRedisplay();
+					scene.wireframe = false;
+				}
+				else
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+					glutPostRedisplay();
+					scene.wireframe = true;
+				}
+				break;
+		case 2: if (scene.smoothShading) // cout << "toggle smooth/flat shading function call\n";
+				{
+					scene.smoothShading = false;
+					glutPostRedisplay();
+				}
+				else
+				{
+					scene.smoothShading = true;
+					glutPostRedisplay();
+				}
+				break;
+		case 3: exit(1);
+	}
 }
 
 void keyboard (unsigned char key, int x, int y)
@@ -166,50 +212,51 @@ void keyboard (unsigned char key, int x, int y)
 	switch (key) {
 		case '8': yCam += 0.5;
 					 glutPostRedisplay();
-					 cout << "rotate up\n";
+					 // cout << "rotate up\n";
 					 break;
 		case '2': yCam -= 0.5;
 					 glutPostRedisplay();
-					 cout << "rotate down\n";
+					 // cout << "rotate down\n";
 					 break;
 		case '4': xCam -= 0.5;
 					 glutPostRedisplay();
-					 cout << "rotate left\n";
+					 // cout << "rotate left\n";
 					 break;
 		case '6': xCam += 0.5;
 					 glutPostRedisplay();
-					 cout << "rotate right\n";
+					 // cout << "rotate right\n";
 					 break;
-		case '0': if (fractal.zoom != maxZoom)
+		case '0': if (scene.zoom != maxZoom)
 				  {
 					z -= 0.5;
-					fractal.zoom += 1;
-					cout << "Zoom in\n";
+					scene.zoom += 1;
+					// cout << "Zoom in\n";
 				  }
 				  glutPostRedisplay();
 				  break;
-		case '1': if (fractal.zoom != minZoom)
+		case '1': if (scene.zoom != minZoom)
 				  {
 					z += 0.5;
-					fractal.zoom -= 1;
-					cout << "Zoom out\n";
+					scene.zoom -= 1;
+					// cout << "Zoom out\n";
 				  }
 				  glutPostRedisplay();
 				  break;
 		case 'r': xCam = 0.0;
 				  yCam = 0.0;
 				  z = 4.75;
-				  fractal.zoom = 0;
+				  scene.zoom = 0;
 				  glutPostRedisplay();
-				  cout << "reset\n";
+				  // cout << "reset\n";
 				  break;
 		case 'q': exit (1);
 	}
-	// fractal.myDraw();
+	// scene.myDraw();
 }
 
 void printInstructions()
 {
+	cout << "\nLeft click for menu\n";
 	cout << "Keypresses:\n";
 	cout << "0: zoom in\n";
 	cout << "1: zoom out\n";
@@ -231,9 +278,9 @@ int main(int argc, char **argv)
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Al Capone Pong");
 	setup();
+	initMenu();
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(resize);
-	glutMouseFunc(mouse);
 	glutKeyboardFunc (keyboard);
 	glutMainLoop();
 

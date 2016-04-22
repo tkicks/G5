@@ -23,6 +23,8 @@ graphics G5 collaborative assignment
  	* ~~quit~~
  * Menu
  	* toggle textures on/off
- 	* toggle wireframe on/off
+ 		* have to add textures to test but should work
+ 	* ~~toggle wireframe on/off~~
  	* toggle smooth/flat shading
- 	* quit
+ 		* have to add lighting to test but should work
+ 	* ~~quit~~
