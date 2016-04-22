@@ -107,7 +107,6 @@ void drawScene(void)
 	glLoadIdentity ();
 
 
-	//--------------------------END scene VIEWPORT---------------------------
 
 	alCapone = glmReadOBJ("al.obj");
 
@@ -115,7 +114,28 @@ void drawScene(void)
 	glmFacetNormals(alCapone);
 	glmVertexNormals(alCapone, 90.0);
 
+	// looks better but doesn't rotate together
+	// back wall
 	glPushMatrix();
+		glColor3f(1.0, 0.0, 0.0);
+		glTranslatef(0.0, 0.0, 2.0);
+		glRectf(-1.0, 1.0, 1.0, -0.45);
+		glTranslatef(0.0, 0.0, -2.0);
+	glPopMatrix();
+
+	// floor needs work
+	glPushMatrix();
+		glColor3f(0.5, 0.35, 0.05);
+		glTranslatef(0.0, 0.0, 2.0);
+		glRotatef(-45, 1, 0, 0);
+		glRectf(-1.0, -0.45, 1.0, -1.0);
+		glTranslatef(0.0, 0.0, -2.0);
+		glRotatef(45, 1, 0, 0);
+	glPopMatrix();
+
+	// Al Capone
+	glPushMatrix();
+		glColor3f(1.0, 1.0, 1.0);
 		glTranslatef(1.0, -0.5, 0.0);
 		glScalef(0.5, 0.5, 0.5);
 		glRotatef(-90, 0, 1, 0);
@@ -123,7 +143,29 @@ void drawScene(void)
 			glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
 		else
 			glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
+		glTranslatef(-1.0, 0.5, 0.0);
+		glScalef(-0.5, -0.5, -0.5);
+		glRotatef(90, 0, 1, 0);
 	glPopMatrix();
+
+
+	// rotate both together
+	//
+	// glPushMatrix();
+	// 	glColor3f(1.0, 0.0, 0.0);
+	// 	glRectf(-1.0, 1.0, 1.0, -0.45);
+
+	// 	glPushMatrix();
+	// 		glColor3f(1.0, 1.0, 1.0);
+	// 		glTranslatef(1.0, -0.5, 0.0);
+	// 		glScalef(0.5, 0.5, 0.5);
+	// 		glRotatef(-90, 0, 1, 0);
+	// 		if (scene.smoothShading)
+	// 			glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
+	// 		else
+	// 			glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
+	// 	glPopMatrix();
+	// glPopMatrix();
 	glutSwapBuffers();
 }
 
