@@ -10,12 +10,16 @@ graphics G5 collaborative assignment
  	* ~~resize~~
  	* add texture
  * Cups
+ 	* Equation for surface of revolution found
+ 	* Proportions of solo cup found
+ 	* Experimenting texture/lighting Friday then implementing
  * Ping Pong ball
    * add logo texture
  * Walls x3
  	* add tile texture
  * Floor
  * Table
+ 	*(A) Will make and implement along with cups
  * ~~Keyboard~~
  	* ~~rotate R/L/U/D~~
  	* ~~reset camera~~
