@@ -19,7 +19,7 @@ graphics G5 collaborative assignment
  	* add tile texture
  	* use cube and scale in x,y,z to make it look like a wall so you do not have to compute normals
  * Floor
- 	* use cube and scale in x,y,z to make it look like a wall so you do not have to compute normals
+ 	* use cube and scale in x,y,z to make it look like a floor so you do not have to compute normals
  * Table
  	* (A) Will make and implement along with cups
  * ~~Keyboard~~
