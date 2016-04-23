@@ -19,7 +19,7 @@ graphics G5 collaborative assignment
  	* add tile texture
  * Floor
  * Table
- 	*(A) Will make and implement along with cups
+ 	* (A) Will make and implement along with cups
  * ~~Keyboard~~
  	* ~~rotate R/L/U/D~~
  	* ~~reset camera~~
