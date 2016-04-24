@@ -39,8 +39,8 @@ static GLUquadricObj *qobj;
 
 const int maxZoom = 6;
 const int minZoom = -14;
-// const int wallFloorHeight;
-// const int wallFloorWidth;
+int wallFloorHeight = 3.0;
+int wallFloorWidth = 3.0;
 
 /*************************************************************/
 
@@ -68,59 +68,17 @@ public:
 
 Scene scene;
 
-/************************Class Methods***************************/
-
-// void Scene::zRotation(int direction){
-
-// 	float xCoord,yCoord,xP,yP,fX,fY;
-
-// 	xCoord=currP[0];
-// 	yCoord=startY+currP[1]+objHeight;
-
-// 	fX= currP[0];
-// 	fY= currP[1]+startY;
-
-// 	xP= xCoord*cos(direction*angle) - yCoord*sin(direction*angle) +(-1*fX*cos(direction*angle)+fY*sin(direction*angle));
-// 	yP= xCoord*sin(direction*angle) + yCoord*cos(direction*angle) +(-1*fX*sin(direction*angle)-fY*cos(direction*angle));
-
-
-// 	currP[0]+=xP;
-// 	currP[1]+=yP;
-
-// }
-
-/*****************************************************************/
-
-
-// void
-// texenv(void)
-// {
-//     GLfloat env_color[4], border_color[4];
-    
-//     cell_vector(env_color, ecolor, 4);
-//     cell_vector(border_color, bcolor, 4);
-    
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magfilter);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wraps);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapt);
-//     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, env);
-//     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, env_color);
-//     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color);
-// }
-
-// void
-// texture(void)
-// {
-//     texenv();
-//     gluBuild2DMipmaps(GL_TEXTURE_2D, 3, iwidth, iheight, GL_RGB, GL_UNSIGNED_BYTE, image);
-// }
-
 
 
 // Drawing routine.
 void drawScene(void)
 {
+
+	static float amb[] =  {0.4, 0.4, 0.4, 0.0};
+    static float dif[] =  {1.0, 1.0, 1.0, 0.0};
+    
+    float light_diffuse[] = {100.0, 0.0, 100.0, 100.0}; 
+    float light_position[] = {-100.0, 100.0, 1.0, 0.0};
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -133,6 +91,29 @@ void drawScene(void)
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
 
+	// lighting???
+	// GLfloat ambientColor[] = {0.2f, 0.2f, 0.2f, 1.0f}; //Color(0.2, 0.2, 0.2)
+ 	// glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
+
+ 	// GLfloat lightColor0[] = {0.5f, 0.5f, 0.5f, 1.0f}; //Color (0.5, 0.5, 0.5)
+ 	// GLfloat lightPos0[] = {4.0f, 0.0f, 8.0f, 1.0f}; //Positioned at (4, 0, 8)
+ 	// glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
+ 	// glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+
+ 	// GLfloat lightColor1[] = {0.5f, 0.2f, 0.2f, 1.0f}; //Color (0.5, 0.2, 0.2)
+ 	// //Coming from the direction (-1, 0.5, 0.5)
+ 	// GLfloat lightPos1[] = {-1.0f, 0.5f, 0.5f, 0.0f};
+ 	// glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
+ 	// glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+
+ 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+    glEnable(GL_LIGHTING);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
+
 
 	// set up for al capone object
 	alCapone = glmReadOBJ("al.obj");
@@ -141,9 +122,12 @@ void drawScene(void)
 	glmVertexNormals(alCapone, 90.0);
 
 	// set up for wall/floor texture
-	// free(image);	// clear out image?
-	// image = glmReadPPM("wallFloor.ppm", &wallFloorWidth, &wallFloorHeight);
-	// texture();
+	free(image);	// clear out image?
+	image = glmReadPPM("wallFloor.ppm", &wallFloorWidth, &wallFloorHeight);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wallFloorWidth, wallFloorHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexParameteri(GL_TEXTURE_2D, GL_REPEAT, GL_NEAREST);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	
 
 
 	glPushMatrix();
@@ -157,6 +141,7 @@ void drawScene(void)
 			glTranslatef(0.0, 0.8, 0.0);
 			glScalef(1.2, 1.2, 1.2);
 			glColor3f(0.5, 0.35, 0.05);
+			glEnable(GL_TEXTURE_2D);	// for textures
 			glutSolidCube(3.0);
 			glColor3f(1.0, 1.0, 1.0);
 			glutWireCube(3.0);
@@ -181,6 +166,11 @@ void drawScene(void)
 		glPopMatrix();
 	glPopMatrix();
 
+
+	glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHT1);
+    glDisable(GL_LIGHTING);
+
 	glutSwapBuffers();
 }
 
@@ -188,7 +178,9 @@ void drawScene(void)
 void setup(void) 
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glShadeModel (GL_FLAT);
+	glShadeModel (GLM_SMOOTH);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_NORMALIZE);
 	glEnable (GL_DEPTH_TEST);
 	qobj = gluNewQuadric();
 }
