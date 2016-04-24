@@ -105,8 +105,8 @@ void Scene::drawCup(){
 		glColor3f(1.0,0,0);
 		
 		for (float i = 0; i < 2*PI; i+=(PI/32)){
-			glVertex3f(sRadius*cos(i),-height,sRadius*sin(i));
 			glVertex3f(sRadius*cos(i+(PI/32)),-height,sRadius*sin(i+(PI/32)));
+			glVertex3f(sRadius*cos(i),-height,sRadius*sin(i));
 			glVertex3f(bRadius*cos(i),0,bRadius*sin(i));
 			glVertex3f(bRadius*cos(i+(PI/32)),0,bRadius*sin(i+(PI/32)));
 		}     
