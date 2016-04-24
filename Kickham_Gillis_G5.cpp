@@ -51,8 +51,9 @@ static float amb[] =  {0.3, 0.3, 0.3, 0.0};
 static float dif[] =  {0.6, 0.6, 0.6, 0.6};
 static float spec[] = { 1.0 , 1.0 , 1.0 , 1.0 };
 float light_diffuse[] = {1.0, 1.0, 1.0, 200.0}; 
-float light_position[] = {10.0, 10.0, -5.0, 0.0};
-float light_position2[] = {-10.0, -10.0, -5.0, 100.0};
+float light_position[] = {0.0, 10.0, 0.0, 0.0};
+float light_position2[] = {-10.0, -10.0, -2.0, 0.0};
+float light_position3[] = {10.0, -10.0, -2.0, 0.0};
 // =================================================
 
 /*************************************************************/
@@ -150,8 +151,11 @@ void Scene::enableLighting()
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT1, GL_POSITION, light_position2);
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT2, GL_POSITION, light_position3);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHT2);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_NORMALIZE);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
@@ -165,6 +169,7 @@ void Scene::disableLighting()
 	// lighting
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHT2);
 	glDisable(GL_LIGHTING);
 	glDisable (GL_COLOR_MATERIAL);
 }
@@ -251,7 +256,7 @@ void drawScene(void)
 		glPopMatrix();
 		
 		glPushMatrix();
-			scene.enableLighting();
+			// scene.enableLighting();
 
 			glTranslatef(0.0, -1.0, 1.25);
 			glPushMatrix();
