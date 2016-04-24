@@ -161,6 +161,12 @@ void Scene::enableLighting()
 	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
 	glMaterialfv( GL_FRONT , GL_SPECULAR , spec);
+	glMaterialfv(GL_BACK, GL_AMBIENT, amb);
+	glMaterialfv(GL_BACK, GL_DIFFUSE, dif);
+	glMaterialfv( GL_BACK , GL_SPECULAR , spec);
+	glEnable(GL_COLOR_MATERIAL);
+
+	
 	// ===================================================
 }
 
