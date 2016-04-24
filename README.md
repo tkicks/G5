@@ -17,9 +17,11 @@ graphics G5 collaborative assignment
    * add logo texture
  * Walls x3
  	* add tile texture
+ 	* use cube and scale in x,y,z to make it look like a wall so you do not have to compute normals
  * Floor
+ 	* use cube and scale in x,y,z to make it look like a floor so you do not have to compute normals
  * Table
- 	*(A) Will make and implement along with cups
+ 	* (A) Will make and implement along with cups
  * ~~Keyboard~~
  	* ~~rotate R/L/U/D~~
  	* ~~reset camera~~
