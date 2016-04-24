@@ -49,8 +49,9 @@ int wallFloorWidth = 3.0;
 // lighting ========================================
 static float amb[] =  {1.0, 1.0, 1.0, 0.0};
 static float dif[] =  {1.0, 1.0, 1.0, 0.0};
-float light_diffuse[] = {100.0, 0.0, 100.0, 100.0}; 
-float light_position[] = {-100.0, 100.0, 1.0, 0.0};
+static float spec[] = { 1.0 , 1.0 , 1.0 , 1.0 };
+float light_diffuse[] = {100.0, 0.0, 100.0, 0.0}; 
+float light_position[] = {-100.0, 100.0, -2.0, 0.0};
 // =================================================
 
 /*************************************************************/
@@ -70,6 +71,8 @@ public:
 
 	 // void zRotation(int direction);
 	void drawCup();
+	void enableLighting();
+	void disableLighting();
 
 
 	vector< vector<float> > vertices;
@@ -106,6 +109,27 @@ void Scene::drawCup(){
 
 }
 
+void Scene::enableLighting()
+{
+	// lighting ==========================================
+ 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);;
+	glEnable(GL_NORMALIZE);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
+	glMaterialfv( GL_FRONT , GL_SPECULAR , spec);
+	// ===================================================
+}
+
+void Scene::disableLighting()
+{
+	// lighting
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable (GL_COLOR_MATERIAL);
+}
 
 /*****************************************************************/
 
@@ -127,15 +151,7 @@ void drawScene(void)
 	glLoadIdentity ();
 
 
-	// lighting ==========================================
- 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHT1);
-	glEnable(GL_LIGHTING);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
-	// ===================================================
+
 
 
 	// set up for al capone object
@@ -154,6 +170,9 @@ void drawScene(void)
 
 
 	glPushMatrix();
+
+		// scene.enableLighting();
+
 		glTranslatef(0.0, -0.8, 0.0);
 
 		// floor and walls and ceiling
@@ -187,10 +206,16 @@ void drawScene(void)
 			glScalef(-0.8, -0.8, -0.8);
 			// glRotatef(90, 0, 1, 0);		// sideways
 		glPopMatrix();
+
+		// scene.disableLighting();
+
 	glPopMatrix();
 	
 	glPushMatrix();
 		
+		scene.enableLighting();
+
+
 		glTranslatef(0.0, -1.0, 1.25);
 		glScalef(0.666,0.666,0.666);
 		glPushMatrix();
@@ -222,12 +247,12 @@ void drawScene(void)
 
 		glPopMatrix();
 
+		scene.disableLighting();
+
+
 	glPopMatrix();
 
-	// lighting
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHT1);
-	glDisable(GL_LIGHTING);
+	
 
 	glutSwapBuffers();
 }
@@ -238,8 +263,7 @@ void setup(void)
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glShadeModel (GLM_SMOOTH);
 	// lighting
-	glEnable(GL_LIGHTING);
-	glEnable(GL_NORMALIZE);
+	// glEnable(GL_LIGHTING)
 	// end lighting
 	glEnable (GL_DEPTH_TEST);
 	qobj = gluNewQuadric();
