@@ -42,6 +42,13 @@ const int minZoom = -14;
 int wallFloorHeight = 3.0;
 int wallFloorWidth = 3.0;
 
+// lighting
+static float amb[] =  {0.4, 0.4, 0.4, 0.0};
+static float dif[] =  {1.0, 1.0, 1.0, 0.0};
+
+float light_diffuse[] = {100.0, 0.0, 100.0, 100.0}; 
+float light_position[] = {-100.0, 100.0, 1.0, 0.0};
+
 /*************************************************************/
 
 
@@ -74,11 +81,6 @@ Scene scene;
 void drawScene(void)
 {
 
-	static float amb[] =  {0.4, 0.4, 0.4, 0.0};
-    static float dif[] =  {1.0, 1.0, 1.0, 0.0};
-    
-    float light_diffuse[] = {100.0, 0.0, 100.0, 100.0}; 
-    float light_position[] = {-100.0, 100.0, 1.0, 0.0};
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -91,20 +93,7 @@ void drawScene(void)
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
 
-	// lighting???
-	// GLfloat ambientColor[] = {0.2f, 0.2f, 0.2f, 1.0f}; //Color(0.2, 0.2, 0.2)
- 	// glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 
- 	// GLfloat lightColor0[] = {0.5f, 0.5f, 0.5f, 1.0f}; //Color (0.5, 0.5, 0.5)
- 	// GLfloat lightPos0[] = {4.0f, 0.0f, 8.0f, 1.0f}; //Positioned at (4, 0, 8)
- 	// glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
- 	// glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
-
- 	// GLfloat lightColor1[] = {0.5f, 0.2f, 0.2f, 1.0f}; //Color (0.5, 0.2, 0.2)
- 	// //Coming from the direction (-1, 0.5, 0.5)
- 	// GLfloat lightPos1[] = {-1.0f, 0.5f, 0.5f, 0.0f};
- 	// glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
- 	// glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
 
  	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
