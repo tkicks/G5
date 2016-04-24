@@ -7,6 +7,10 @@ Input:
 
 Output: 
 
+
+
+TO TURN OFF LIGHTING: comment out in drawScene (two places), setup
+
 */
 
 #include <GL/glut.h>
@@ -42,12 +46,12 @@ const int minZoom = -14;
 int wallFloorHeight = 3.0;
 int wallFloorWidth = 3.0;
 
-// lighting
-static float amb[] =  {0.4, 0.4, 0.4, 0.0};
+// lighting ========================================
+static float amb[] =  {1.0, 1.0, 1.0, 0.0};
 static float dif[] =  {1.0, 1.0, 1.0, 0.0};
-
 float light_diffuse[] = {100.0, 0.0, 100.0, 100.0}; 
 float light_position[] = {-100.0, 100.0, 1.0, 0.0};
+// =================================================
 
 /*************************************************************/
 
@@ -62,19 +66,48 @@ class Scene{
 
 public:
 	 
-	 Scene () {wireframe = false; smoothShading = true;};  // constructor
+	Scene () {wireframe = false; smoothShading = true; bRadius=0.15; sRadius=bRadius/1.478261; height=bRadius*2.235294;};  // constructor
 
 	 // void zRotation(int direction);
+	void drawCup();
 
-	 vector< vector<float> > vertices;
-	 bool textures;
-	 bool wireframe;
-	 bool smoothShading;
-	 int zoom;
+
+	vector< vector<float> > vertices;
+	
+	bool textures;
+	bool wireframe;
+	bool smoothShading;
+	
+	int zoom;
+    
+	float bRadius;
+	float sRadius;
+	float height;
+
 };
 
 Scene scene;
+/************************Class Methods***************************/
 
+void Scene::drawCup(){
+
+	glBegin (GL_QUADS);
+
+		glColor3f(1.0,0,0);
+		
+		for (float i = 0; i < 2*PI; i+=(PI/32)){
+			glVertex3f(sRadius*cos(i),-height,sRadius*sin(i));
+			glVertex3f(sRadius*cos(i+(PI/32)),-height,sRadius*sin(i+(PI/32)));
+			glVertex3f(bRadius*cos(i),0,bRadius*sin(i));
+			glVertex3f(bRadius*cos(i+(PI/32)),0,bRadius*sin(i+(PI/32)));
+		}     
+
+	glEnd();
+
+}
+
+
+/*****************************************************************/
 
 
 // Drawing routine.
@@ -94,14 +127,15 @@ void drawScene(void)
 	glLoadIdentity ();
 
 
-
+	// lighting ==========================================
  	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
-    glEnable(GL_LIGHTING);
-    glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHTING);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
+	// ===================================================
 
 
 	// set up for al capone object
@@ -140,9 +174,9 @@ void drawScene(void)
 		// Al Capone
 		glPushMatrix();
 			glColor3f(1.0, 1.0, 1.0);
-			glTranslatef(0.0, -0.2, -1.1);
+			glTranslatef(0.0, -0.2, -2.1);
 			// glTranslatef(1.4, -0.2, 0.0);	// sideways
-			glScalef(0.8, 0.8, 0.8);
+			glScalef(0.9, 0.9, 0.9);
 			// glRotatef(-90, 0, 1, 0);		// sideways
 			if (scene.smoothShading)
 				glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
@@ -154,11 +188,46 @@ void drawScene(void)
 			// glRotatef(90, 0, 1, 0);		// sideways
 		glPopMatrix();
 	glPopMatrix();
+	
+	glPushMatrix();
+		
+		glTranslatef(0.0, -1.0, 1.25);
+		glScalef(0.666,0.666,0.666);
+		glPushMatrix();
+			glColor3f(0.545, 0.271, 0.075);
+			glRotatef(5,1,0,0);
+			glScalef(1.333,0.1,3.55);
+			glutSolidCube(1);
+		glPopMatrix();
 
+		// Legs
+		
 
+		glPushMatrix();
+
+			glTranslatef(0.35,0,1.25);
+			scene.drawCup();
+			
+		glPopMatrix();
+
+		glPushMatrix();
+			
+			glTranslatef(-0.35,0,1.25);
+			scene.drawCup();
+
+		glPushMatrix();
+
+			glTranslatef(.35,0,-.75);
+			scene.drawCup();
+
+		glPopMatrix();
+
+	glPopMatrix();
+
+	// lighting
 	glDisable(GL_LIGHT0);
-    glDisable(GL_LIGHT1);
-    glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHTING);
 
 	glutSwapBuffers();
 }
@@ -168,8 +237,10 @@ void setup(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glShadeModel (GLM_SMOOTH);
+	// lighting
 	glEnable(GL_LIGHTING);
 	glEnable(GL_NORMALIZE);
+	// end lighting
 	glEnable (GL_DEPTH_TEST);
 	qobj = gluNewQuadric();
 }
@@ -312,7 +383,7 @@ int main(int argc, char **argv)
 	printInstructions();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(1125, 1125);
+	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Al Capone Pong");
 	setup();
