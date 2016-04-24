@@ -4,6 +4,7 @@
 !*.c
 !*.h
 !*.obj
+!*.ppm
 !*.jpg
 !*.mtl
 !*.md
