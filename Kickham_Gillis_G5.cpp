@@ -145,13 +145,13 @@ void drawScene(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity ();
 	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-	gluLookAt (xCam, yCam, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt (0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
 
 
-
+	glTranslatef(xCam,yCam,0);
 
 
 	// set up for al capone object
@@ -213,36 +213,60 @@ void drawScene(void)
 	
 	glPushMatrix();
 		
-		scene.enableLighting();
+      glTranslatef(0.0, -1.0, 1.25);
+	glPushMatrix();
+   	  glColor3f(0.545, 0.271, 0.075);
+      glPushMatrix();
+         glTranslatef(.35,0,-.88);
+         glRotatef(90.0, 1.0, 0.0, 0.0);
+         gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+      glPopMatrix();
+      glPushMatrix();
+         glTranslatef(-.35,0,-.88);
+         glRotatef(90.0, 1.0, 0.0, 0.0);
+         gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+      glPopMatrix();
+      glPushMatrix();
+         glTranslatef(-.35,0,0.2);
+         glRotatef(90.0, 1.0, 0.0, 0.0);
+         gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+      glPopMatrix();
+      glPushMatrix();
+         glTranslatef(.35,0,0.2);
+         glRotatef(90.0, 1.0, 0.0, 0.0);
+         gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+      glPopMatrix();
+      glPushMatrix();
+         glScalef(0.666,0.666,0.666);
+         glColor3f(0.545, 0.271, 0.075);
+         glScalef(1.333,0.1,3.55);
+         glutSolidCube(1);
+      glPopMatrix();
+   glPopMatrix();
+   
 
-
-		glTranslatef(0.0, -1.0, 1.25);
-		glScalef(0.666,0.666,0.666);
 		glPushMatrix();
-			glColor3f(0.545, 0.271, 0.075);
-			glRotatef(5,1,0,0);
-			glScalef(1.333,0.1,3.55);
-			glutSolidCube(1);
-		glPopMatrix();
 
-		// Legs
-		
-
-		glPushMatrix();
-
-			glTranslatef(0.35,0,1.25);
+			glTranslatef(0.35,0,0);
 			scene.drawCup();
 			
 		glPopMatrix();
 
 		glPushMatrix();
 			
-			glTranslatef(-0.35,0,1.25);
+			glTranslatef(-0.35,0,0);
 			scene.drawCup();
 
 		glPushMatrix();
 
-			glTranslatef(.35,0,-.75);
+			glTranslatef(.35,0,-.60);
+			scene.drawCup();
+
+		glPopMatrix();
+
+		glPushMatrix();
+
+			glTranslatef(.35,0,-2.00);
 			scene.drawCup();
 
 		glPopMatrix();
@@ -250,7 +274,7 @@ void drawScene(void)
 		scene.disableLighting();
 
 
-	glPopMatrix();
+   glPopMatrix();
 
 	
 
