@@ -34,3 +34,5 @@ graphics G5 collaborative assignment
  	* toggle smooth/flat shading
  		* have to add lighting to test but should work
  	* ~~quit~~
+ * Just before submit
+ 	* Make window bigger (made it smaller to fit on my small screen)
