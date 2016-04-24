@@ -33,11 +33,14 @@ float yCam = 0.0;
 float z = 4.75;
 
 GLMmodel* alCapone = NULL;
+unsigned char* image = NULL;
 
 static GLUquadricObj *qobj;
 
 const int maxZoom = 6;
 const int minZoom = -14;
+// const int wallFloorHeight;
+// const int wallFloorWidth;
 
 /*************************************************************/
 
@@ -86,10 +89,34 @@ Scene scene;
 
 // }
 
-
-
-
 /*****************************************************************/
+
+
+// void
+// texenv(void)
+// {
+//     GLfloat env_color[4], border_color[4];
+    
+//     cell_vector(env_color, ecolor, 4);
+//     cell_vector(border_color, bcolor, 4);
+    
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magfilter);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wraps);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapt);
+//     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, env);
+//     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, env_color);
+//     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color);
+// }
+
+// void
+// texture(void)
+// {
+//     texenv();
+//     gluBuild2DMipmaps(GL_TEXTURE_2D, 3, iwidth, iheight, GL_RGB, GL_UNSIGNED_BYTE, image);
+// }
+
+
 
 // Drawing routine.
 void drawScene(void)
@@ -107,65 +134,53 @@ void drawScene(void)
 	glLoadIdentity ();
 
 
-
+	// set up for al capone object
 	alCapone = glmReadOBJ("al.obj");
-
 	glmUnitize(alCapone);
 	glmFacetNormals(alCapone);
 	glmVertexNormals(alCapone, 90.0);
 
-	// looks better but doesn't rotate together
-	// back wall
+	// set up for wall/floor texture
+	// free(image);	// clear out image?
+	// image = glmReadPPM("wallFloor.ppm", &wallFloorWidth, &wallFloorHeight);
+	// texture();
+
+
 	glPushMatrix();
-		glColor3f(1.0, 0.0, 0.0);
-		glTranslatef(0.0, 0.0, 2.0);
-		glRectf(-1.0, 1.0, 1.0, -0.45);
-		glTranslatef(0.0, 0.0, -2.0);
+		glTranslatef(0.0, -0.8, 0.0);
+
+		// floor and walls and ceiling
+		glPushMatrix();
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_FRONT);
+			glTranslatef(0.0, 0.8, 0.0);
+			glScalef(1.2, 1.2, 1.2);
+			glColor3f(0.5, 0.35, 0.05);
+			glutSolidCube(3.0);
+			glColor3f(1.0, 1.0, 1.0);
+			glutWireCube(3.0);
+			glDisable(GL_CULL_FACE);
+		glPopMatrix();
+
+		// Al Capone
+		glPushMatrix();
+			glColor3f(1.0, 1.0, 1.0);
+			glTranslatef(0.0, -0.2, -1.1);
+			// glTranslatef(1.4, -0.2, 0.0);	// sideways
+			glScalef(0.8, 0.8, 0.8);
+			// glRotatef(-90, 0, 1, 0);		// sideways
+			if (scene.smoothShading)
+				glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
+			else
+				glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
+			glTranslatef(0.0, 0.2, 1.1);
+			// glTranslatef(-1.4, 0.2, 0.0);	// sideways
+			glScalef(-0.8, -0.8, -0.8);
+			// glRotatef(90, 0, 1, 0);		// sideways
+		glPopMatrix();
 	glPopMatrix();
 
-	// floor needs work
-	glPushMatrix();
-		glColor3f(0.5, 0.35, 0.05);
-		glTranslatef(0.0, 0.0, 2.0);
-		glRotatef(-45, 1, 0, 0);
-		glRectf(-1.0, -0.45, 1.0, -1.0);
-		glTranslatef(0.0, 0.0, -2.0);
-		glRotatef(45, 1, 0, 0);
-	glPopMatrix();
-
-	// Al Capone
-	glPushMatrix();
-		glColor3f(1.0, 1.0, 1.0);
-		glTranslatef(1.0, -0.5, 0.0);
-		glScalef(0.5, 0.5, 0.5);
-		glRotatef(-90, 0, 1, 0);
-		if (scene.smoothShading)
-			glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
-		else
-			glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
-		glTranslatef(-1.0, 0.5, 0.0);
-		glScalef(-0.5, -0.5, -0.5);
-		glRotatef(90, 0, 1, 0);
-	glPopMatrix();
-
-
-	// rotate both together
-	//
-	// glPushMatrix();
-	// 	glColor3f(1.0, 0.0, 0.0);
-	// 	glRectf(-1.0, 1.0, 1.0, -0.45);
-
-	// 	glPushMatrix();
-	// 		glColor3f(1.0, 1.0, 1.0);
-	// 		glTranslatef(1.0, -0.5, 0.0);
-	// 		glScalef(0.5, 0.5, 0.5);
-	// 		glRotatef(-90, 0, 1, 0);
-	// 		if (scene.smoothShading)
-	// 			glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
-	// 		else
-	// 			glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
-	// 	glPopMatrix();
-	// glPopMatrix();
 	glutSwapBuffers();
 }
 
