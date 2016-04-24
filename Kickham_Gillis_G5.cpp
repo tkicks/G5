@@ -94,18 +94,51 @@ Scene scene;
 
 void Scene::drawCup(){
 
-	glBegin (GL_QUADS);
+   glPushMatrix();
 
-		glColor3f(1.0,0,0);
-		
-		for (float i = 0; i < 2*PI; i+=(PI/32)){
-			glVertex3f(sRadius*cos(i+(PI/32)),-height,sRadius*sin(i+(PI/32)));
-			glVertex3f(sRadius*cos(i),-height,sRadius*sin(i));
-			glVertex3f(bRadius*cos(i),0,bRadius*sin(i));
-			glVertex3f(bRadius*cos(i+(PI/32)),0,bRadius*sin(i+(PI/32)));
-		}     
+   glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
+   glEnable(GL_CULL_FACE);
+   glCullFace(GL_BACK);
 
-	glEnd();
+   glBegin (GL_QUADS);
+
+      glColor3f(1.0,1.0,1.0);
+      
+      for (float i = 0; i < 2*PI; i+=(PI/32)){
+         glVertex3f(sRadius*cos(i+(PI/32)),-height,sRadius*sin(i+(PI/32)));
+         glVertex3f(bRadius*cos(i+(PI/32)),0,bRadius*sin(i+(PI/32)));
+         glVertex3f(bRadius*cos(i),0,bRadius*sin(i));
+         glVertex3f(sRadius*cos(i),-height,sRadius*sin(i));
+      }     
+
+   glEnd();
+
+   glDisable(GL_CULL_FACE);
+   glPopMatrix();
+   
+
+   glPushMatrix();
+
+   glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
+   glEnable(GL_CULL_FACE);
+   glCullFace(GL_FRONT);
+
+   glBegin (GL_QUADS);
+
+      glColor3f(1.0,0,0);
+      
+      for (float i = 0; i < 2*PI; i+=(PI/32)){
+        glVertex3f(sRadius*cos(i+(PI/32)),-height,sRadius*sin(i+(PI/32)));
+         glVertex3f(bRadius*cos(i+(PI/32)),0,bRadius*sin(i+(PI/32)));
+         glVertex3f(bRadius*cos(i),0,bRadius*sin(i));
+         glVertex3f(sRadius*cos(i),-height,sRadius*sin(i));
+      }     
+
+   glEnd();
+
+   glDisable(GL_CULL_FACE);
+   glPopMatrix();
+
 
 }
 
@@ -138,7 +171,7 @@ void Scene::disableLighting()
 void drawScene(void)
 {
 
-
+    
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -177,7 +210,7 @@ void drawScene(void)
 
 		// floor and walls and ceiling
 		glPushMatrix();
-			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_FRONT);
 			glTranslatef(0.0, 0.8, 0.0);
@@ -212,73 +245,63 @@ void drawScene(void)
 	glPopMatrix();
 	
 	glPushMatrix();
-		
-      glTranslatef(0.0, -1.0, 1.25);
-	glPushMatrix();
-   	  glColor3f(0.545, 0.271, 0.075);
-      glPushMatrix();
-         glTranslatef(.35,0,-.88);
-         glRotatef(90.0, 1.0, 0.0, 0.0);
-         gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
-      glPopMatrix();
-      glPushMatrix();
-         glTranslatef(-.35,0,-.88);
-         glRotatef(90.0, 1.0, 0.0, 0.0);
-         gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
-      glPopMatrix();
-      glPushMatrix();
-         glTranslatef(-.35,0,0.2);
-         glRotatef(90.0, 1.0, 0.0, 0.0);
-         gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
-      glPopMatrix();
-      glPushMatrix();
-         glTranslatef(.35,0,0.2);
-         glRotatef(90.0, 1.0, 0.0, 0.0);
-         gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
-      glPopMatrix();
-      glPushMatrix();
-         glScalef(0.666,0.666,0.666);
-         glColor3f(0.545, 0.271, 0.075);
-         glScalef(1.333,0.1,3.55);
-         glutSolidCube(1);
-      glPopMatrix();
-   glPopMatrix();
-   
 
+		glTranslatef(0.0, -1.0, 1.25);
 		glPushMatrix();
+			//Table
+			glColor3f(0.545, 0.271, 0.075);
+			glPushMatrix();
+				glTranslatef(.35,0,-.88);
+				glRotatef(90.0, 1.0, 0.0, 0.0);
+				gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(-.35,0,-.88);
+				glRotatef(90.0, 1.0, 0.0, 0.0);
+				gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(-.35,0,0.2);
+				glRotatef(90.0, 1.0, 0.0, 0.0);
+				gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(.35,0,0.2);
+				glRotatef(90.0, 1.0, 0.0, 0.0);
+				gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+			glPopMatrix();
+			glPushMatrix();
+				glScalef(0.666,0.666,0.666);
+				glColor3f(0.545, 0.271, 0.075);
+				glScalef(1.333,0.1,3.55);
+				glutSolidCube(1);
+			glPopMatrix();
+			//Cups
+			glPushMatrix();
+				glTranslatef(0.35,0,0);
+				scene.drawCup();
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(-0.35,0,0);
+				scene.drawCup();
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(0,0,-.43);
+				scene.drawCup();
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(0,0,-2.00);
+				scene.drawCup();
+			glPopMatrix();
+			//Ping pong ball
 
-			glTranslatef(0.35,0,0);
-			scene.drawCup();
 			
-		glPopMatrix();
-
-		glPushMatrix();
-			
-			glTranslatef(-0.35,0,0);
-			scene.drawCup();
-
-		glPushMatrix();
-
-			glTranslatef(.35,0,-.60);
-			scene.drawCup();
 
 		glPopMatrix();
-
-		glPushMatrix();
-
-			glTranslatef(.35,0,-2.00);
-			scene.drawCup();
-
-		glPopMatrix();
-
-		scene.disableLighting();
-
-
-   glPopMatrix();
-
 	
-
-	glutSwapBuffers();
+	glPopMatrix();
+	scene.disableLighting();
+    glutSwapBuffers();
 }
 
 // Initialization routine.
@@ -289,7 +312,7 @@ void setup(void)
 	// lighting
 	// glEnable(GL_LIGHTING)
 	// end lighting
-	glEnable (GL_DEPTH_TEST);
+	glEnable (GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
 	qobj = gluNewQuadric();
 }
 
