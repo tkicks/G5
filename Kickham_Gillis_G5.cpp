@@ -50,10 +50,10 @@ int wallFloorWidth = 3.0;
 static float amb[] =  {0.3, 0.3, 0.3, 0.0};
 static float dif[] =  {0.6, 0.6, 0.6, 0.6};
 static float spec[] = { 1.0 , 1.0 , 1.0 , 1.0 };
-float light_diffuse[] = {1.0, 1.0, 1.0, 200.0}; 
-float light_position[] = {0.0, 10.0, 0.0, 0.0};
-float light_position2[] = {-10.0, -10.0, -2.0, 0.0};
-float light_position3[] = {10.0, -10.0, -2.0, 0.0};
+float light_diffuse[] = {0.8, 0.8, 0.8, 200.0}; 
+// float light_position[] = {0.0, 10.0, 0.0, 0.0};
+float light_position2[] = {-10.0, 10.0, -2.0, 0.0};
+float light_position3[] = {10.0, 10.0, -2.0, 0.0};
 // =================================================
 
 /*************************************************************/
@@ -262,13 +262,13 @@ void Scene::genVertNorms(){
 void Scene::enableLighting()
 {
 	// lighting ==========================================
- 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+ 	// glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	// glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT1, GL_POSITION, light_position2);
 	glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT2, GL_POSITION, light_position3);
-	glEnable(GL_LIGHT0);
+	// glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHT1);
 	glEnable(GL_LIGHT2);
 	glEnable(GL_LIGHTING);
@@ -288,7 +288,7 @@ void Scene::enableLighting()
 void Scene::disableLighting()
 {
 	// lighting
-	glDisable(GL_LIGHT0);
+	// glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHT1);
 	glDisable(GL_LIGHT2);
 	glDisable(GL_LIGHTING);
@@ -356,6 +356,8 @@ void drawScene(void)
 			glPopMatrix();
 
 			// Al Capone
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
 			glPushMatrix();
 				glColor3f(1.0, 1.0, 1.0);
 				glTranslatef(0.0, -0.2, -2.1);
@@ -369,7 +371,7 @@ void drawScene(void)
 				// glTranslatef(-1.4, 0.2, 0.0);	// sideways
 				glScalef(-0.8, -0.8, -0.8);
 			glPopMatrix();
-
+			glDisable(GL_CULL_FACE);
 		glPopMatrix();
 		
 		glPushMatrix();
@@ -431,6 +433,7 @@ void drawScene(void)
 	      			glColor3f(1.0,0.6,0.2);
 	      			glTranslatef(0,0.7,-.25);
 	      			gluQuadricNormals(qobj, GLU_SMOOTH);
+	      			
 	      			gluSphere(qobj, .1, 15.0, 5.0);
 	   			glPopMatrix(); 
 
