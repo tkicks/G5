@@ -110,18 +110,8 @@ void Scene::makeCup(){
 			if (!smoothShading){
 				glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
 			}
+			
 			else{
-				glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
-			}
-			glVertex3f(innerVerts[i+1][0],innerVerts[i+1][1],innerVerts[i+1][2]);
-
-			if(smoothShading){
-				glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
-			}
-
-			glVertex3f(outterVerts[i+1][0],outterVerts[i+1][1],outterVerts[i+1][2]);
-
-			if(smoothShading){
 				glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
 			}
 			
@@ -132,7 +122,19 @@ void Scene::makeCup(){
 			}
 
 			glVertex3f(innerVerts[i][0],innerVerts[i][1],innerVerts[i][2]);
+			
+			if(smoothShading){
+				glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
+			}
+
+			glVertex3f(innerVerts[i+1][0],innerVerts[i+1][1],innerVerts[i+1][2]);
 		
+			if(smoothShading){
+				glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
+			}
+
+	
+			glVertex3f(outterVerts[i+1][0],outterVerts[i+1][1],outterVerts[i+1][2]);
 		}
 
 	glEnd();
