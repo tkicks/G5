@@ -106,41 +106,33 @@ void Scene::makeCup(){
 	glBegin (GL_QUADS);
 
 		for (int i=0;i<innerVerts.size()-1;i++){
+			
+			if (!smoothShading){
+				glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
+			}
+			else{
+				glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
+			}
 			glVertex3f(innerVerts[i+1][0],innerVerts[i+1][1],innerVerts[i+1][2]);
 
 			if(smoothShading){
 				glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
 			}
-			else{
-				glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
-			}
 
 			glVertex3f(outterVerts[i+1][0],outterVerts[i+1][1],outterVerts[i+1][2]);
 
 			if(smoothShading){
-				glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
-			}
-			else{
-				glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
-			}
-
-			glVertex3f(outterVerts[i][0],outterVerts[i][1],outterVerts[i][2]);
-
-			if(smoothShading){
 				glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
 			}
-			else{
-				glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
+			
+			glVertex3f(outterVerts[i][0],outterVerts[i][1],outterVerts[i][2]);
+			
+			if(smoothShading){
+				glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
 			}
 
 			glVertex3f(innerVerts[i][0],innerVerts[i][1],innerVerts[i][2]);
-
-			if(smoothShading){
-				glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
-			}
-			else{
-				glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
-			}
+		
 		}
 
 	glEnd();
@@ -223,7 +215,7 @@ void Scene::findVerts(){
 	vector<float> tempA;
 	vector<float> tempB;
 
-	for (float i = 0; i <= 2*PI; i+=(PI/32)){
+	for (float i = 0; i <= 2*PI; i+=(PI/8)){
 		tempA.push_back(sRadius*cos(i));
 		tempA.push_back(-height);
 		tempA.push_back(sRadius*sin(i));
