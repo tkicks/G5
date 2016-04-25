@@ -363,7 +363,6 @@ void drawScene(void)
 				glTranslatef(0.0, -0.2, -2.1);
 				// glTranslatef(1.4, -0.2, 0.0);	// sideways
 				glScalef(0.9, 0.9, 0.9);
-				// glRotatef(-180, 0, 1, 0);		// face frontwards instead of backwards
 				if (scene.smoothShading)
 					glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
 				else
@@ -371,7 +370,6 @@ void drawScene(void)
 				glTranslatef(0.0, 0.2, 1.1);
 				// glTranslatef(-1.4, 0.2, 0.0);	// sideways
 				glScalef(-0.8, -0.8, -0.8);
-				// glRotatef(180, 0, 1, 0);		// face frontwards instead of backwards
 			glPopMatrix();
 			glDisable(GL_CULL_FACE);
 		glPopMatrix();
@@ -386,21 +384,25 @@ void drawScene(void)
 				glPushMatrix();
 					glTranslatef(.35,0,-.88);
 					glRotatef(90.0, 1.0, 0.0, 0.0);
+					gluQuadricNormals(qobj, GLU_SMOOTH);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
 				glPopMatrix();
 				glPushMatrix();
 					glTranslatef(-.35,0,-.88);
 					glRotatef(90.0, 1.0, 0.0, 0.0);
+					gluQuadricNormals(qobj, GLU_SMOOTH);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
 				glPopMatrix();
 				glPushMatrix();
 					glTranslatef(-.35,0,0.2);
 					glRotatef(90.0, 1.0, 0.0, 0.0);
+					gluQuadricNormals(qobj, GLU_SMOOTH);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
 				glPopMatrix();
 				glPushMatrix();
 					glTranslatef(.35,0,0.2);
 					glRotatef(90.0, 1.0, 0.0, 0.0);
+					gluQuadricNormals(qobj, GLU_SMOOTH);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
 				glPopMatrix();
 				glPushMatrix();
@@ -431,7 +433,9 @@ void drawScene(void)
 			    //Ping pong ball
 				glPushMatrix();
 	      			glColor3f(1.0,0.6,0.2);
-	      			glTranslatef(0.4,0.2,-.25);
+	      			glTranslatef(0,0.7,-.25);
+	      			gluQuadricNormals(qobj, GLU_SMOOTH);
+	      			
 	      			gluSphere(qobj, .1, 15.0, 5.0);
 	   			glPopMatrix(); 
 
