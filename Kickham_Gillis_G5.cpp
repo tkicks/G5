@@ -39,16 +39,16 @@ static GLUquadricObj *qobj;
 
 const int maxZoom = 6;
 const int minZoom = -14;
-int wallFloorHeight = 3.0;
-int wallFloorWidth = 3.0;
+int wallFloorHeight;
+int wallFloorWidth;
 
 // lighting ========================================
-static float amb[] =  {0.3, 0.3, 0.3, 0.0};
+static float amb[] =  {1.0, 1.0, 1.0, 0.0};
 static float dif[] =  {0.6, 0.6, 0.6, 1.0};
 static float spec[] = { 0.7 , 0.7 , 0.7 , 1.0 };
 float light_diffuse[] = {1.0, 1.0, 1.0, 0.0};
 float light_diffuse2[] = {0.3, 0.3, 0.3, 0.0};
-float light_position[] = {0.0, -2.0, 0.0, 0.0};
+float light_position[] = {0.0, -10.0, 0.0, 50.0};
 float light_position2[] = {-10.0, 10.0, -2.0, 0.0};
 float light_position3[] = {10.0, 10.0, -2.0, 0.0};
 // =================================================
@@ -66,7 +66,7 @@ class Scene{
 
 public:
 	 
-	Scene () {wireframe = false; smoothShading = true; bRadius=0.15; sRadius=bRadius/1.478261; height=bRadius*2.235294;};  // constructor
+	Scene () {wireframe = false; smoothShading = true; textures = true; bRadius=0.15; sRadius=bRadius/1.478261; height=bRadius*2.235294;};  // constructor
 
 	 // void zRotation(int direction);
 	void makeCup();
@@ -86,7 +86,7 @@ public:
 	bool smoothShading;
 	
 	int zoom;
-    
+	
 	float bRadius;
 	float sRadius;
 	float height;
@@ -149,7 +149,7 @@ void Scene::makeCup(){
 
 void Scene::drawCup(){
 
-    glPushMatrix();
+	glPushMatrix();
 
 		glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_CULL_FACE);
@@ -159,8 +159,8 @@ void Scene::drawCup(){
 
 		glDisable(GL_CULL_FACE);
 
-    glPopMatrix();
-    glPushMatrix();
+	glPopMatrix();
+	glPushMatrix();
 
 		glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_CULL_FACE);
@@ -282,7 +282,7 @@ void Scene::genVertNorms(){
 void Scene::enableLighting()
 {
 	// lighting ==========================================
- 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse2);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse2);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT1, GL_POSITION, light_position2);
@@ -322,7 +322,7 @@ void Scene::disableLighting()
 void drawScene(void)
 {
 
-    
+	
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -342,19 +342,38 @@ void drawScene(void)
 	alCapone = glmReadOBJ("al.obj");
 	glmUnitize(alCapone);
 	glmFacetNormals(alCapone);
-	glmVertexNormals(alCapone, 90.0);
+	glmVertexNormals(alCapone, 100.0);
 
 	// set up for wall/floor texture
 	free(image);	// clear out image?
 	image = glmReadPPM("wallFloor.ppm", &wallFloorWidth, &wallFloorHeight);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wallFloorWidth, wallFloorHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glTexParameteri(GL_TEXTURE_2D, GL_REPEAT, GL_NEAREST);
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// set parameters for the edges of texture
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// replace polygon with texture (not just cover polygon, in which case
+	// the color of the previous polygon shows through the texture)
+	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	
+	// define 
+	glTexImage2D (GL_TEXTURE_2D, 	// target: 2D texture
+		   0,			// level = 0 unless multiple resolutions
+		   GL_RGB,		// internal image format 
+		                        // (see OpenGL text for options)
+		   wallFloorWidth,		// image width
+		   wallFloorHeight,		// image height
+		   0,			// border width (0 or 1;see OpenGL text)
+		   GL_RGB,		// image format (see OpenGL text)
+		   GL_UNSIGNED_BYTE,  	// format of data within image file
+		   image);		// image file
 	
 	glPushMatrix();
 		scene.enableLighting();
 
 		glPushMatrix();
+
+			glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
 
 			// scene.enableLighting();
 
@@ -362,17 +381,33 @@ void drawScene(void)
 
 			// floor and walls and ceiling
 			glPushMatrix();
-				glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_FRONT);
 				glTranslatef(0.0, 0.8, 0.0);
 				glScalef(1.2, 1.2, 1.2);
 				glColor3f(0.5, 0.35, 0.05);
-				glEnable(GL_TEXTURE_2D);	// for textures
+				// glEnable(GL_TEXTURE_2D);	// for textures
 				glutSolidCube(3.0);
 				glColor3f(1.0, 1.0, 1.0);
 				glutWireCube(3.0);
 				glDisable(GL_CULL_FACE);
+			glPopMatrix();
+
+			// paintings on wall
+			glPushMatrix();
+				glEnable(GL_COLOR_MATERIAL);
+				if (scene.textures)
+					glEnable(GL_TEXTURE_2D);
+				glTranslatef(0.0, 1.0, -2.0);
+				glBegin(GL_POLYGON);
+					glColor3f(1.0, 1.0, 1.0);
+					glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0, 0.0); 
+					glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0, 0.0);
+					glTexCoord2f(1.0, 1.0);	glVertex3f(1.0, 1.0, 0.0);
+					glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0, 0.0);
+				glEnd();
+				if (scene.textures)
+					glDisable(GL_TEXTURE_2D);
 			glPopMatrix();
 
 			// Al Capone
@@ -381,6 +416,7 @@ void drawScene(void)
 			glPushMatrix();
 				glColor3f(1.0, 1.0, 1.0);
 				glTranslatef(0.0, -0.2, -2.1);
+				// glRotatef(-15.0, 1.0, 1.0, 0.0);
 				// glTranslatef(1.4, -0.2, 0.0);	// sideways
 				glScalef(0.9, 0.9, 0.9);
 				if (scene.smoothShading)
@@ -406,33 +442,48 @@ void drawScene(void)
 				glPushMatrix();
 					glTranslatef(.35,0,-.88);
 					glRotatef(90.0, 1.0, 0.0, 0.0);
-					gluQuadricNormals(qobj, GLU_SMOOTH);
-					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+					if (scene.smoothShading)
+						gluQuadricNormals(qobj, GLU_SMOOTH);
+					else
+						gluQuadricNormals(qobj, GLM_FLAT);
+					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
 				glPushMatrix();
 					glTranslatef(-.35,0,-.88);
 					glRotatef(90.0, 1.0, 0.0, 0.0);
-					gluQuadricNormals(qobj, GLU_SMOOTH);
-					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+					if (scene.smoothShading)
+						gluQuadricNormals(qobj, GLU_SMOOTH);
+					else
+						gluQuadricNormals(qobj, GLM_FLAT);
+					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
 				glPushMatrix();
 					glTranslatef(-.35,0,0.2);
 					glRotatef(90.0, 1.0, 0.0, 0.0);
-					gluQuadricNormals(qobj, GLU_SMOOTH);
-					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+					if (scene.smoothShading)
+						gluQuadricNormals(qobj, GLU_SMOOTH);
+					else
+						gluQuadricNormals(qobj, GLM_FLAT);
+					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
 				glPushMatrix();
 					glTranslatef(.35,0,0.2);
 					glRotatef(90.0, 1.0, 0.0, 0.0);
-					gluQuadricNormals(qobj, GLU_SMOOTH);
-					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+					if (scene.smoothShading)
+						gluQuadricNormals(qobj, GLU_SMOOTH);
+					else
+						gluQuadricNormals(qobj, GLM_FLAT);
+					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_BACK);
 				glPushMatrix();
 					glScalef(0.666,0.666,0.666);
-					glColor3f(0.545, 0.271, 0.075);
 					glScalef(1.333,0.1,3.55);
+					glColor3f(0.545, 0.271, 0.075);
 					glutSolidCube(1);
 				glPopMatrix();
+				glDisable(GL_CULL_FACE);
 				//Cups
 				glPushMatrix();
 					glTranslatef(0.35,0,0);
@@ -450,13 +501,16 @@ void drawScene(void)
 					glTranslatef(0,0,-2.00);
 					scene.drawCup();
 				glPopMatrix();
-			    //Ping pong ball
+				//Ping pong ball
 				glPushMatrix();
-	      			glColor3f(1.0,0.6,0.2);
-	      			glTranslatef(0.4,0.2,-.25);
-	      			gluQuadricNormals(qobj, GLU_SMOOTH);
-	      			gluSphere(qobj, .1, 15.0, 5.0);
-	   			glPopMatrix();
+					glColor3f(1.0,0.6,0.2);
+					glTranslatef(0.4,0.2,-.25);
+					if (scene.smoothShading)
+						gluQuadricNormals(qobj, GLU_SMOOTH);
+					else
+						gluQuadricNormals(qobj, GLM_FLAT);
+					gluSphere(qobj, .1, 15.0, 5.0);
+				glPopMatrix();
 
 
 			glPopMatrix();	
@@ -467,7 +521,7 @@ void drawScene(void)
 		scene.disableLighting();
 	glPopMatrix();
 
-    glutSwapBuffers();
+	glutSwapBuffers();
 }
 
 // Initialization routine.
@@ -487,7 +541,7 @@ void resize(int w, int h)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
+	// glFrustum (-1, 1, -1, 1, 1.5, 20.0);
 	glMatrixMode(GL_MODELVIEW);
 
 	// Pass the size of the OpenGL window to globals.
