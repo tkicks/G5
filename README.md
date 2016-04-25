@@ -4,24 +4,21 @@ graphics G5 collaborative assignment
 ## To-Do
 
 
- * Add Al Capone
+ * Al Capone
  	* ~~display~~
  	* ~~rotate~~
  	* ~~resize~~
- 	* add texture
+ 	* ~~add texture~~
+ 	* (if time) fix Al's face
  * Cups
- 	* Equation for surface of revolution found
- 	* Proportions of solo cup found
- 	* Experimenting texture/lighting Friday then implementing
+ 	* ~~Add normals and lighting~~
+ 	* Add texture
  * Ping Pong ball
-   * add logo texture
- * Walls x3
- 	* add tile texture
- 	* use cube and scale in x,y,z to make it look like a wall so you do not have to compute normals
- * Floor
- 	* use cube and scale in x,y,z to make it look like a floor so you do not have to compute normals
- * Table
- 	* (A) Will make and implement along with cups
+    * Ensure smooth and flat shading are enabled and toggelable
+ * Walls, ceilng, floor
+ 	* add a tile texture to walls
+ 	* Ensure smooth and flat shading are enabled and toggelable
+ * ~~Table~~
  * ~~Keyboard~~
  	* ~~rotate R/L/U/D~~
  	* ~~reset camera~~
