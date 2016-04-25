@@ -433,7 +433,6 @@ void drawScene(void)
 	      			glColor3f(1.0,0.6,0.2);
 	      			glTranslatef(0,0.7,-.25);
 	      			gluQuadricNormals(qobj, GLU_SMOOTH);
-	      			
 	      			gluSphere(qobj, .1, 15.0, 5.0);
 	   			glPopMatrix(); 
 
