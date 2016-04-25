@@ -34,6 +34,7 @@ float z = 4.75;
 
 GLMmodel* alCapone = NULL;
 unsigned char* image = NULL;
+unsigned char* image2 = NULL;
 
 static GLUquadricObj *qobj;
 
@@ -49,8 +50,8 @@ static float spec[] = { 0.7 , 0.7 , 0.7 , 1.0 };
 float light_diffuse[] = {1.0, 1.0, 1.0, 0.0};
 float light_diffuse2[] = {0.3, 0.3, 0.3, 0.0};
 float light_position[] = {0.0, -10.0, 0.0, 50.0};
-float light_position2[] = {-10.0, 10.0, -2.0, 0.0};
-float light_position3[] = {10.0, 10.0, -2.0, 0.0};
+float light_position2[] = {-10.0, 8.0, -3.0, 0.0};
+float light_position3[] = {10.0, 8.0, -3.0, 0.0};
 // =================================================
 
 /*************************************************************/
@@ -104,6 +105,28 @@ public:
 Scene scene;
 /************************Class Methods***************************/
 void Scene::makeCup(){
+
+	// define 
+	free(image);	// clear out image?
+	image = glmReadPPM("ridges.ppm", &wallFloorWidth, &wallFloorHeight);
+
+	glTexImage2D (GL_TEXTURE_2D, 	// target: 2D texture
+	0,			// level = 0 unless multiple resolutions
+	GL_RGB,		// internal image format 
+	                    // (see OpenGL text for options)
+	wallFloorWidth,		// image width
+	wallFloorHeight,		// image height
+	0,			// border width (0 or 1;see OpenGL text)
+	GL_RGB,		// image format (see OpenGL text)
+	GL_UNSIGNED_BYTE,  	// format of data within image file
+	image);		// image file
+
+	// put this where you're drawing
+	// if (scene.textures)
+	// 	glEnable(GL_TEXTURE_2D);
+	// // draw
+	// if (scene.textures)
+	// 	glDisable(GL_TEXTURE_2D);
 
 	glBegin (GL_QUADS);
 
@@ -311,29 +334,42 @@ void Scene::disableLighting()
 
 void Scene::tiling()
 {
-	for (int i = 0; i < 4; i += 2)
+	vector <float>sufaceNorms;
+	vector <float>temp;
+	for (float i = 0; i < 4; i += 2)
 	{
-		for (int j = 0; j < 4; j += 2.0)
+		for (float j = 0; j < 4; j += 2.0)
 		{
 			glBegin(GL_POLYGON);
-				if (!smoothShading){
-					glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
-				}
-				else{
-					glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
-				}
+				// temp.push_back(-2.0+i, -0.2+j, -0.8);
+				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
+				// temp.clear();
+				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
+				glNormal3f(-2.0+i, -0.2+j, -0.8);
 				glTexCoord2f(0.0, 0.0); glVertex3f(-2.0+i, -0.2+j, -0.8); 
-				if(smoothShading){
-					glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
-				}
+				
+				// surfaceNorms.push_back({})
+				// sufaceNorms = getNormal(-2.0+i, -1.8+j, -0.8);
+				// temp.push_back(-2.0+i, -1.8+j, -0.8);
+				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
+				// temp.clear();
+				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
 				glTexCoord2f(0.0, 1.0); glVertex3f(-2.0+i, 1.8+j, -0.8);
-				if(smoothShading){
-					glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
-				}
+				
+				// surfaceNorms.push_back({})
+				// sufaceNorms = getNormal(0.0+i, 1.8+j, -0.8);
+				// temp.push_back(0.0+i, 1.8+j, -0.8);
+				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
+				// temp.clear();
+				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
 				glTexCoord2f(1.0, 1.0);	glVertex3f(0.0+i, 1.8+j, -0.8);
-				if(smoothShading){
-					glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
-				}
+				
+				// surfaceNorms.push_back({})
+				// sufaceNorms = getNormal(0.0+i, -0.2+j, -0.8);
+				// temp.push_back(0.0+i, -0.2+j, -0.8);
+				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
+				// temp.clear();
+				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
 				glTexCoord2f(1.0, 0.0); glVertex3f(0.0+i, -0.2+j, -0.8);
 			glEnd();
 		}
@@ -354,13 +390,13 @@ void drawScene(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity ();
 	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-	gluLookAt (xCam, yCam, z, xCam, yCam, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt (xCam, yCam, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
 
 
-	// glTranslatef(xCam,yCam,0);
+	glTranslatef(xCam,yCam,0);
 
 
 	// set up for al capone object
@@ -372,6 +408,7 @@ void drawScene(void)
 	// set up for wall/floor texture
 	free(image);	// clear out image?
 	image = glmReadPPM("wallFloor.ppm", &wallFloorWidth, &wallFloorHeight);
+	// image2 = glmReadPPM("fishermen.ppm", &wallFloorWidth, &wallFloorHeight);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	// set parameters for the edges of texture
@@ -392,6 +429,8 @@ void drawScene(void)
 		   GL_RGB,		// image format (see OpenGL text)
 		   GL_UNSIGNED_BYTE,  	// format of data within image file
 		   image);		// image file
+
+	
 	
 	glPushMatrix();
 		scene.enableLighting();
@@ -411,7 +450,6 @@ void drawScene(void)
 				glTranslatef(0.0, 0.8, 0.0);
 				glScalef(1.2, 1.2, 1.2);
 				glColor3f(0.9, 0.9, 0.9);
-				// glEnable(GL_TEXTURE_2D);	// for textures
 				glutSolidCube(3.0);
 				glColor3f(1.0, 1.0, 1.0);
 				glutWireCube(3.0);
@@ -449,6 +487,7 @@ void drawScene(void)
 				glScalef(-0.8, -0.8, -0.8);
 			glPopMatrix();
 			glDisable(GL_CULL_FACE);
+
 		glPopMatrix();
 		
 		glPushMatrix();
@@ -629,19 +668,19 @@ void menu (int menuVal)
 void keyboard (unsigned char key, int x, int y)
 {
 	switch (key) {
-		case '8': yCam += 0.5;
+		case '8': yCam -= 0.5;
 					 glutPostRedisplay();
 					 // cout << "rotate up\n";
 					 break;
-		case '2': yCam -= 0.5;
+		case '2': yCam += 0.5;
 					 glutPostRedisplay();
 					 // cout << "rotate down\n";
 					 break;
-		case '4': xCam -= 0.5;
+		case '4': xCam += 0.5;
 					 glutPostRedisplay();
 					 // cout << "rotate left\n";
 					 break;
-		case '6': xCam += 0.5;
+		case '6': xCam -= 0.5;
 					 glutPostRedisplay();
 					 // cout << "rotate right\n";
 					 break;
