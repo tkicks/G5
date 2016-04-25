@@ -194,13 +194,13 @@ void drawScene(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity ();
 	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-	gluLookAt (0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt (xCam, yCam, z, xCam, yCam, 0.0, 0.0, 1.0, 0.0);
 
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
 
 
-	glTranslatef(xCam,yCam,0);
+	// glTranslatef(xCam,yCam,0);
 
 
 	// set up for al capone object
