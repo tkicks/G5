@@ -72,12 +72,17 @@ public:
 	Scene () {wireframe = false; smoothShading = true; bRadius=0.15; sRadius=bRadius/1.478261; height=bRadius*2.235294;};  // constructor
 
 	 // void zRotation(int direction);
+	void makeCup();
 	void drawCup();
 	void enableLighting();
 	void disableLighting();
 
+	vector<float> getNormal(vector<float> in1, vector<float> in2, vector<float> in3);
+	vector<float> avgVec(vector<float> in1, vector<float> in2);
 
-	vector< vector<float> > vertices;
+	void findVerts();
+	void genSurfNorms();
+	void genVertNorms();
 	
 	bool textures;
 	bool wireframe;
@@ -89,58 +94,168 @@ public:
 	float sRadius;
 	float height;
 
+	vector<vector<float> >outterVerts;
+	vector<vector<float> >innerVerts;
+
+	vector<vector<float> >surfaceNormals;
+	vector<vector<float> >vertexNormals;
+
 };
 
 Scene scene;
 /************************Class Methods***************************/
+void Scene::makeCup(){
+
+	glBegin (GL_QUADS);
+
+		for (int i=0;i<innerVerts.size()-1;i++){
+			glVertex3f(innerVerts[i+1][0],innerVerts[i+1][1],innerVerts[i+1][2]);
+			
+			glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
+			
+			glVertex3f(outterVerts[i+1][0],outterVerts[i+1][1],outterVerts[i+1][2]);
+			
+			glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
+			
+			glVertex3f(outterVerts[i][0],outterVerts[i][1],outterVerts[i][2]);
+
+			glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
+			
+			glVertex3f(innerVerts[i][0],innerVerts[i][1],innerVerts[i][2]);
+			
+			glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
+		
+		}
+	
+	glEnd();
+
+}
 
 void Scene::drawCup(){
 
-   glPushMatrix();
+    glPushMatrix();
 
-   glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
-   glEnable(GL_CULL_FACE);
-   glCullFace(GL_BACK);
+		glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glColor3f(1.0,1.0,1.0);
+		makeCup();
 
-   glBegin (GL_QUADS);
+		glDisable(GL_CULL_FACE);
 
-      glColor3f(1.0,1.0,1.0);
-      
-      for (float i = 0; i < 2*PI; i+=(PI/32)){
-         glVertex3f(sRadius*cos(i+(PI/32)),-height,sRadius*sin(i+(PI/32)));
-         glVertex3f(bRadius*cos(i+(PI/32)),0,bRadius*sin(i+(PI/32)));
-         glVertex3f(bRadius*cos(i),0,bRadius*sin(i));
-         glVertex3f(sRadius*cos(i),-height,sRadius*sin(i));
-      }     
+    glPopMatrix();
+    glPushMatrix();
 
-   glEnd();
+		glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		glColor3f(1.0,0.0,0.0);
+		makeCup();
 
-   glDisable(GL_CULL_FACE);
-   glPopMatrix();
-   
+		glDisable(GL_CULL_FACE);
+	   
+	glPopMatrix();
 
-   glPushMatrix();
+}
 
-   glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
-   glEnable(GL_CULL_FACE);
-   glCullFace(GL_FRONT);
+vector<float> Scene::getNormal(vector<float> in1, vector<float> in2, vector<float> in3){
 
-   glBegin (GL_QUADS);
+	vector<float> result;
+	vector<float> v1(3,0.0);
+	vector<float> v2(3,0.0);
 
-      glColor3f(1.0,0,0);
-      
-      for (float i = 0; i < 2*PI; i+=(PI/32)){
-        glVertex3f(sRadius*cos(i+(PI/32)),-height,sRadius*sin(i+(PI/32)));
-         glVertex3f(bRadius*cos(i+(PI/32)),0,bRadius*sin(i+(PI/32)));
-         glVertex3f(bRadius*cos(i),0,bRadius*sin(i));
-         glVertex3f(sRadius*cos(i),-height,sRadius*sin(i));
-      }     
+	for (int i = 0; i < 3; i++){
+		v1[i]=in2[i]-in1[i];
+		v2[i]=in3[i]-in1[i];
+	}
 
-   glEnd();
+	float newX, newY, newZ;
+	
+	newX=(v1[1]*v2[2])-(v1[2]*v2[1]);
+	result.push_back(newX);
 
-   glDisable(GL_CULL_FACE);
-   glPopMatrix();
+	newY=(v1[2]*v2[0])-(v1[0]*v2[2]);
+	result.push_back(newY);
 
+	newZ=(v1[0]*v2[1])-(v1[1]*v2[0]);
+	result.push_back(newZ);	
+
+
+	float mag= sqrt((result[0]*result[0])+(result[1]*result[1])+(result[2]*result[2]));
+
+	for (int j = 0; j < 3; j++){
+		result[j]=result[j]/mag;
+	}
+
+
+	return result;
+}
+
+vector<float> Scene::avgVec(vector<float> in1, vector<float> in2){
+
+	vector<float> result(3,0.0);
+
+	for (int i = 0; i < 3; i++){
+		result[i]=(in1[i]+in2[i])/2;
+	}
+
+	return result;
+}
+
+void Scene::findVerts(){
+
+	vector<float> tempA;
+	vector<float> tempB;
+
+	for (float i = 0; i <= 2*PI; i+=(PI/32)){
+		tempA.push_back(sRadius*cos(i));
+		tempA.push_back(-height);
+		tempA.push_back(sRadius*sin(i));
+		tempB.push_back(bRadius*cos(i));
+		tempB.push_back(0);
+		tempB.push_back(bRadius*sin(i));
+		
+		innerVerts.push_back(tempA);
+		outterVerts.push_back(tempB);
+
+		tempA.clear();
+		tempB.clear();
+	}		
+
+}
+
+void Scene::genSurfNorms(){
+
+	vector<float> tempA;
+	for (int i = 0; i<innerVerts.size()-1; i++){
+
+		tempA=getNormal(innerVerts[i+1],innerVerts[i],outterVerts[i]);
+		surfaceNormals.push_back(tempA);
+		tempA.clear();
+
+	} 
+
+}
+
+void Scene::genVertNorms(){
+
+	
+
+	vector<float> tempA;
+	for (int i= 0; i < surfaceNormals.size(); i++){
+		
+		if(i==0){
+			tempA=avgVec(surfaceNormals[i],surfaceNormals[(surfaceNormals.size()-1)]);
+			
+		}
+		else{
+			tempA=avgVec(surfaceNormals[i],surfaceNormals[i-1]);
+			
+		}
+
+		vertexNormals.push_back(tempA);
+		tempA.clear();
+	}
 
 }
 
@@ -335,6 +450,9 @@ void setup(void)
 	// end lighting
 	glEnable (GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
 	qobj = gluNewQuadric();
+	scene.findVerts();
+	scene.genSurfNorms();
+	scene.genVertNorms();
 }
 
 // OpenGL window reshape routine.
