@@ -48,9 +48,9 @@ int wallFloorWidth = 3.0;
 
 // lighting ========================================
 static float amb[] =  {0.3, 0.3, 0.3, 0.0};
-static float dif[] =  {0.6, 0.6, 0.6, 0.6};
-static float spec[] = { 1.0 , 1.0 , 1.0 , 1.0 };
-float light_diffuse[] = {0.8, 0.8, 0.8, 200.0}; 
+static float dif[] =  {0.6, 0.6, 0.6, 1.0};
+static float spec[] = { 0.7 , 0.7 , 0.7 , 1.0 };
+float light_diffuse[] = {0.8, 0.8, 0.8, 0.0}; 
 // float light_position[] = {0.0, 10.0, 0.0, 0.0};
 float light_position2[] = {-10.0, 10.0, -2.0, 0.0};
 float light_position3[] = {10.0, 10.0, -2.0, 0.0};
@@ -410,6 +410,7 @@ void drawScene(void)
 					glutSolidCube(1);
 				glPopMatrix();
 				//Cups
+				glEnable(GL_COLOR_MATERIAL);
 				glPushMatrix();
 					glTranslatef(0.35,0,0);
 					scene.drawCup();
@@ -426,6 +427,7 @@ void drawScene(void)
 					glTranslatef(0,0,-2.00);
 					scene.drawCup();
 				glPopMatrix();
+				glDisable(GL_COLOR_MATERIAL);
 			    //Ping pong ball
 				glPushMatrix();
 	      			glColor3f(1.0,0.6,0.2);
@@ -447,9 +449,6 @@ void setup(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glShadeModel (GLM_SMOOTH);
-	// lighting
-	// glEnable(GL_LIGHTING)
-	// end lighting
 	glEnable (GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
 	qobj = gluNewQuadric();
 	scene.findVerts();
