@@ -81,7 +81,7 @@ public:
 	void genSurfNorms();
 	void genVertNorms();
 
-	void wallPaper();
+	void tiling();
 	
 	bool textures;
 	bool wireframe;
@@ -309,16 +309,31 @@ void Scene::disableLighting()
 	glDisable (GL_COLOR_MATERIAL);
 }
 
-void Scene::wallPaper()
+void Scene::tiling()
 {
 	for (int i = 0; i < 4; i += 2)
 	{
 		for (int j = 0; j < 4; j += 2.0)
 		{
 			glBegin(GL_POLYGON);
+				if (!smoothShading){
+					glNormal3f(surfaceNormals[i][0],surfaceNormals[i][1],surfaceNormals[i][2]);
+				}
+				else{
+					glNormal3f(vertexNormals[i+1][0], vertexNormals[i+1][1], vertexNormals[i+1][2]);
+				}
 				glTexCoord2f(0.0, 0.0); glVertex3f(-2.0+i, -0.2+j, -0.8); 
+				if(smoothShading){
+					glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
+				}
 				glTexCoord2f(0.0, 1.0); glVertex3f(-2.0+i, 1.8+j, -0.8);
+				if(smoothShading){
+					glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
+				}
 				glTexCoord2f(1.0, 1.0);	glVertex3f(0.0+i, 1.8+j, -0.8);
+				if(smoothShading){
+					glNormal3f(vertexNormals[i][0], vertexNormals[i][1], vertexNormals[i][2]);
+				}
 				glTexCoord2f(1.0, 0.0); glVertex3f(0.0+i, -0.2+j, -0.8);
 			glEnd();
 		}
@@ -403,22 +418,20 @@ void drawScene(void)
 				glDisable(GL_CULL_FACE);
 			glPopMatrix();
 
-			// paintings on wall
+			// tiling on floor
 			glPushMatrix();
-				// glScalef()
 				glRotatef(-91, 1.0, 0.0, 0.0);
 				glScalef(0.8, 0.8, 1.4);
 				glTranslatef(0.0, -2.4, 0.2);
+
 				glEnable(GL_COLOR_MATERIAL);
 				if (scene.textures)
 					glEnable(GL_TEXTURE_2D);
-				// glTranslatef(0.0, 1.0, -2.0);
-				// glBegin(GL_POLYGON);
 				glColor3f(1.0, 1.0, 1.0);
-				scene.wallPaper();
-				// glEnd();
+				scene.tiling();
 				if (scene.textures)
 					glDisable(GL_TEXTURE_2D);
+
 			glPopMatrix();
 
 			// Al Capone
@@ -427,15 +440,12 @@ void drawScene(void)
 			glPushMatrix();
 				glColor3f(1.0, 1.0, 1.0);
 				glTranslatef(0.0, -0.2, -2.1);
-				// glRotatef(-15.0, 1.0, 1.0, 0.0);
-				// glTranslatef(1.4, -0.2, 0.0);	// sideways
 				glScalef(0.9, 0.9, 0.9);
 				if (scene.smoothShading)
 					glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
 				else
 					glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
 				glTranslatef(0.0, 0.2, 1.1);
-				// glTranslatef(-1.4, 0.2, 0.0);	// sideways
 				glScalef(-0.8, -0.8, -0.8);
 			glPopMatrix();
 			glDisable(GL_CULL_FACE);
