@@ -47,11 +47,13 @@ int wallFloorHeight = 3.0;
 int wallFloorWidth = 3.0;
 
 // lighting ========================================
-static float amb[] =  {1.0, 1.0, 1.0, 0.0};
-static float dif[] =  {1.0, 1.0, 1.0, 0.0};
+static float amb[] =  {0.3, 0.3, 0.3, 0.0};
+static float dif[] =  {0.6, 0.6, 0.6, 0.6};
 static float spec[] = { 1.0 , 1.0 , 1.0 , 1.0 };
-float light_diffuse[] = {100.0, 0.0, 100.0, 0.0}; 
-float light_position[] = {-100.0, 100.0, -2.0, 0.0};
+float light_diffuse[] = {1.0, 1.0, 1.0, 200.0}; 
+float light_position[] = {0.0, 10.0, 0.0, 0.0};
+float light_position2[] = {-10.0, -10.0, -2.0, 0.0};
+float light_position3[] = {10.0, -10.0, -2.0, 0.0};
 // =================================================
 
 /*************************************************************/
@@ -147,12 +149,24 @@ void Scene::enableLighting()
 	// lighting ==========================================
  	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position2);
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT2, GL_POSITION, light_position3);
 	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHTING);;
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHT2);
+	glEnable(GL_LIGHTING);
 	glEnable(GL_NORMALIZE);
 	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
 	glMaterialfv( GL_FRONT , GL_SPECULAR , spec);
+	glMaterialfv(GL_BACK, GL_AMBIENT, amb);
+	glMaterialfv(GL_BACK, GL_DIFFUSE, dif);
+	glMaterialfv( GL_BACK , GL_SPECULAR , spec);
+	glEnable(GL_COLOR_MATERIAL);
+
+	
 	// ===================================================
 }
 
@@ -160,6 +174,8 @@ void Scene::disableLighting()
 {
 	// lighting
 	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHT2);
 	glDisable(GL_LIGHTING);
 	glDisable (GL_COLOR_MATERIAL);
 }
@@ -178,13 +194,13 @@ void drawScene(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity ();
 	glFrustum (-1, 1, -1, 1, 1.5, 20.0);
-	gluLookAt (0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt (xCam, yCam, z, xCam, yCam, 0.0, 0.0, 1.0, 0.0);
 
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
 
 
-	glTranslatef(xCam,yCam,0);
+	// glTranslatef(xCam,yCam,0);
 
 
 	// set up for al capone object
@@ -200,110 +216,112 @@ void drawScene(void)
 	glTexParameteri(GL_TEXTURE_2D, GL_REPEAT, GL_NEAREST);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	
-
-
 	glPushMatrix();
+		scene.enableLighting();
 
-		// scene.enableLighting();
-
-		glTranslatef(0.0, -0.8, 0.0);
-
-		// floor and walls and ceiling
 		glPushMatrix();
-			glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_FRONT);
-			glTranslatef(0.0, 0.8, 0.0);
-			glScalef(1.2, 1.2, 1.2);
-			glColor3f(0.5, 0.35, 0.05);
-			glEnable(GL_TEXTURE_2D);	// for textures
-			glutSolidCube(3.0);
-			glColor3f(1.0, 1.0, 1.0);
-			glutWireCube(3.0);
-			glDisable(GL_CULL_FACE);
+
+			// scene.enableLighting();
+
+			glTranslatef(0.0, -0.8, 0.0);
+
+			// floor and walls and ceiling
+			glPushMatrix();
+				glEnable(GL_DEPTH_TEST| GL_DEPTH_BUFFER_BIT);
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_FRONT);
+				glTranslatef(0.0, 0.8, 0.0);
+				glScalef(1.2, 1.2, 1.2);
+				glColor3f(0.5, 0.35, 0.05);
+				glEnable(GL_TEXTURE_2D);	// for textures
+				glutSolidCube(3.0);
+				glColor3f(1.0, 1.0, 1.0);
+				glutWireCube(3.0);
+				glDisable(GL_CULL_FACE);
+			glPopMatrix();
+
+			// Al Capone
+			glPushMatrix();
+				glColor3f(1.0, 1.0, 1.0);
+				glTranslatef(0.0, -0.2, -2.1);
+				// glTranslatef(1.4, -0.2, 0.0);	// sideways
+				glScalef(0.9, 0.9, 0.9);
+				glRotatef(-180, 0, 1, 0);		// face frontwards instead of backwards
+				if (scene.smoothShading)
+					glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
+				else
+					glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
+				glTranslatef(0.0, 0.2, 1.1);
+				// glTranslatef(-1.4, 0.2, 0.0);	// sideways
+				glScalef(-0.8, -0.8, -0.8);
+				glRotatef(180, 0, 1, 0);		// face frontwards instead of backwards
+			glPopMatrix();
+
 		glPopMatrix();
-
-		// Al Capone
+		
 		glPushMatrix();
-			glColor3f(1.0, 1.0, 1.0);
-			glTranslatef(0.0, -0.2, -2.1);
-			// glTranslatef(1.4, -0.2, 0.0);	// sideways
-			glScalef(0.9, 0.9, 0.9);
-			// glRotatef(-90, 0, 1, 0);		// sideways
-			if (scene.smoothShading)
-				glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
-			else
-				glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
-			glTranslatef(0.0, 0.2, 1.1);
-			// glTranslatef(-1.4, 0.2, 0.0);	// sideways
-			glScalef(-0.8, -0.8, -0.8);
-			// glRotatef(90, 0, 1, 0);		// sideways
-		glPopMatrix();
+			// scene.enableLighting();
 
-		// scene.disableLighting();
-
-	glPopMatrix();
-	
-	glPushMatrix();
-
-		glTranslatef(0.0, -1.0, 1.25);
-		glPushMatrix();
-			//Table
-			glColor3f(0.545, 0.271, 0.075);
+			glTranslatef(0.0, -1.0, 1.25);
 			glPushMatrix();
-				glTranslatef(.35,0,-.88);
-				glRotatef(90.0, 1.0, 0.0, 0.0);
-				gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(-.35,0,-.88);
-				glRotatef(90.0, 1.0, 0.0, 0.0);
-				gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(-.35,0,0.2);
-				glRotatef(90.0, 1.0, 0.0, 0.0);
-				gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(.35,0,0.2);
-				glRotatef(90.0, 1.0, 0.0, 0.0);
-				gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
-			glPopMatrix();
-			glPushMatrix();
-				glScalef(0.666,0.666,0.666);
+				//Table
 				glColor3f(0.545, 0.271, 0.075);
-				glScalef(1.333,0.1,3.55);
-				glutSolidCube(1);
-			glPopMatrix();
-			//Cups
-			glPushMatrix();
-				glTranslatef(0.35,0,0);
-				scene.drawCup();
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(-0.35,0,0);
-				scene.drawCup();
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(0,0,-.43);
-				scene.drawCup();
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(0,0,-2.00);
-				scene.drawCup();
-			glPopMatrix();
-			//Ping pong ball
-			glPushMatrix();
-      			glColor3f(1.0,0.6,0.2);
-      			glTranslatef(0,0.7,-.25);
-      			gluSphere(qobj, .1, 15.0, 5.0);
-   			glPopMatrix();   
+				glPushMatrix();
+					glTranslatef(.35,0,-.88);
+					glRotatef(90.0, 1.0, 0.0, 0.0);
+					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(-.35,0,-.88);
+					glRotatef(90.0, 1.0, 0.0, 0.0);
+					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(-.35,0,0.2);
+					glRotatef(90.0, 1.0, 0.0, 0.0);
+					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(.35,0,0.2);
+					glRotatef(90.0, 1.0, 0.0, 0.0);
+					gluCylinder(qobj, .1, .1, 0.7, 15.0, 5.0);
+				glPopMatrix();
+				glPushMatrix();
+					glScalef(0.666,0.666,0.666);
+					glColor3f(0.545, 0.271, 0.075);
+					glScalef(1.333,0.1,3.55);
+					glutSolidCube(1);
+				glPopMatrix();
+				//Cups
+				glPushMatrix();
+					glTranslatef(0.35,0,0);
+					scene.drawCup();
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(-0.35,0,0);
+					scene.drawCup();
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(0,0,-.43);
+					scene.drawCup();
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(0,0,-2.00);
+					scene.drawCup();
+				glPopMatrix();
+			    //Ping pong ball
+				glPushMatrix();
+	      			glColor3f(1.0,0.6,0.2);
+	      			glTranslatef(0,0.7,-.25);
+	      			gluSphere(qobj, .1, 15.0, 5.0);
+	   			glPopMatrix(); 
 
+			glPopMatrix();	
 		glPopMatrix();
-	
+
+		scene.disableLighting();
 	glPopMatrix();
-	scene.disableLighting();
+
     glutSwapBuffers();
 }
 
