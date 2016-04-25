@@ -294,8 +294,11 @@ void drawScene(void)
 				scene.drawCup();
 			glPopMatrix();
 			//Ping pong ball
-
-			
+			glPushMatrix();
+      			glColor3f(1.0,0.6,0.2);
+      			glTranslatef(0,0.7,-.25);
+      			gluSphere(qobj, .1, 15.0, 5.0);
+   			glPopMatrix();   
 
 		glPopMatrix();
 	
