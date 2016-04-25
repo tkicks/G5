@@ -377,7 +377,7 @@ void drawScene(void)
 				glCullFace(GL_FRONT);
 				glTranslatef(0.0, 0.8, 0.0);
 				glScalef(1.2, 1.2, 1.2);
-				glColor3f(0.5, 0.35, 0.05);
+				glColor3f(0.9, 0.9, 0.9);
 				// glEnable(GL_TEXTURE_2D);	// for textures
 				glutSolidCube(3.0);
 				glColor3f(1.0, 1.0, 1.0);
@@ -467,15 +467,17 @@ void drawScene(void)
 						gluQuadricNormals(qobj, GLM_FLAT);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
-				glEnable(GL_CULL_FACE);
-				glCullFace(GL_BACK);
+				// glEnable(GL_CULL_FACE);
+				// glCullFace(GL_BACK);
 				glPushMatrix();
 					glScalef(0.666,0.666,0.666);
 					glScalef(1.333,0.1,3.55);
+					glColor3f(1.0, 1.0, 1.0);
+					glutWireCube(1);
 					glColor3f(0.545, 0.271, 0.075);
 					glutSolidCube(1);
 				glPopMatrix();
-				glDisable(GL_CULL_FACE);
+				// glDisable(GL_CULL_FACE);
 				//Cups
 				glPushMatrix();
 					glTranslatef(0.35,0,0);
@@ -549,8 +551,9 @@ void initMenu()
 	glutCreateMenu(menu);						// call menu function
 	glutAddMenuEntry("Toggle Textures On/Off", 0);
 	glutAddMenuEntry("Toggle Wireframe On/Off", 1);
-	glutAddMenuEntry("Toggle Smooth/Flat Shading", 2);
-	glutAddMenuEntry("Quit", 3);
+	glutAddMenuEntry("Smooth Shading", 2);
+	glutAddMenuEntry("Flat Shading", 3);
+	glutAddMenuEntry("Quit", 4);
 	glutAttachMenu(GLUT_LEFT_BUTTON);			// attach menu to left click action
 }
 
@@ -584,18 +587,13 @@ void menu (int menuVal)
 					scene.wireframe = true;
 				}
 				break;
-		case 2: if (scene.smoothShading) // cout << "toggle smooth/flat shading function call\n";
-				{
-					scene.smoothShading = false;
-					glutPostRedisplay();
-				}
-				else
-				{
-					scene.smoothShading = true;
-					glutPostRedisplay();
-				}
+		case 2: scene.smoothShading = true;
+				glutPostRedisplay();
 				break;
-		case 3: exit(1);
+		case 3: scene.smoothShading = false;
+				glutPostRedisplay();
+				break;
+		case 4: exit(1);
 	}
 }
 
