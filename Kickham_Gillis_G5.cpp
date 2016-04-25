@@ -80,6 +80,8 @@ public:
 	void findVerts();
 	void genSurfNorms();
 	void genVertNorms();
+
+	void wallPaper();
 	
 	bool textures;
 	bool wireframe;
@@ -307,6 +309,22 @@ void Scene::disableLighting()
 	glDisable (GL_COLOR_MATERIAL);
 }
 
+void Scene::wallPaper()
+{
+	for (int i = 0; i < 4; i += 2)
+	{
+		for (int j = 0; j < 4; j += 2.0)
+		{
+			glBegin(GL_POLYGON);
+				glTexCoord2f(0.0, 0.0); glVertex3f(-2.0+i, -0.2+j, -0.8); 
+				glTexCoord2f(0.0, 1.0); glVertex3f(-2.0+i, 1.8+j, -0.8);
+				glTexCoord2f(1.0, 1.0);	glVertex3f(0.0+i, 1.8+j, -0.8);
+				glTexCoord2f(1.0, 0.0); glVertex3f(0.0+i, -0.2+j, -0.8);
+			glEnd();
+		}
+	}
+}
+
 /*****************************************************************/
 
 
@@ -346,7 +364,7 @@ void drawScene(void)
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// replace polygon with texture (not just cover polygon, in which case
 	// the color of the previous polygon shows through the texture)
-	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
 	
 	// define 
 	glTexImage2D (GL_TEXTURE_2D, 	// target: 2D texture
@@ -387,17 +405,18 @@ void drawScene(void)
 
 			// paintings on wall
 			glPushMatrix();
+				// glScalef()
+				glRotatef(-91, 1.0, 0.0, 0.0);
+				glScalef(0.8, 0.8, 1.4);
+				glTranslatef(0.0, -2.4, 0.2);
 				glEnable(GL_COLOR_MATERIAL);
 				if (scene.textures)
 					glEnable(GL_TEXTURE_2D);
-				glTranslatef(0.0, 1.0, -2.0);
-				glBegin(GL_POLYGON);
-					glColor3f(1.0, 1.0, 1.0);
-					glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0, 0.0); 
-					glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0, 0.0);
-					glTexCoord2f(1.0, 1.0);	glVertex3f(1.0, 1.0, 0.0);
-					glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0, 0.0);
-				glEnd();
+				// glTranslatef(0.0, 1.0, -2.0);
+				// glBegin(GL_POLYGON);
+				glColor3f(1.0, 1.0, 1.0);
+				scene.wallPaper();
+				// glEnd();
 				if (scene.textures)
 					glDisable(GL_TEXTURE_2D);
 			glPopMatrix();
