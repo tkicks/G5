@@ -81,6 +81,9 @@ public:
 	vector<float> avgVec(vector<float> in1, vector<float> in2);
 
 	void findVerts();
+	
+	void genFloorNorms();
+
 	void genSurfNorms();
 	void genVertNorms();
 
@@ -99,7 +102,8 @@ public:
 
 	vector<vector<float> >outterVerts;
 	vector<vector<float> >innerVerts;
-
+	
+	vector<float>floorNorms;
 	vector<vector<float> >surfaceNormals;
 	vector<vector<float> >vertexNormals;
 
@@ -268,6 +272,21 @@ void Scene::findVerts(){
 	}		
 
 }
+void Scene::genFloorNorms(){
+
+
+	float v1[] = {-2.0, -0.2, -0.8};
+	vector<float> one (v1, v1 + sizeof(v1) / sizeof(float) );
+
+	float v2[] = {-2.0, 1.8, -0.8};
+	vector<float> two (v2, v2 + sizeof(v2) / sizeof(float) );
+
+	float v3[] = {0.0, 1.8, -0.8};
+	vector<float> three (v3, v3 + sizeof(v3) / sizeof(float) );
+
+	floorNorms=getNormal(one,two,three);
+						
+}
 
 void Scene::genSurfNorms(){
 
@@ -357,7 +376,7 @@ void Scene::tiling()
 				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
 				// temp.clear();
 				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
-				glNormal3f(-2.0+i, -0.2+j, -0.8);
+				glNormal3f(floorNorms[0],floorNorms[1],floorNorms[2]);
 				glTexCoord2f(0.0, 0.0); glVertex3f(-2.0+i, -0.2+j, -0.8); 
 				
 				// surfaceNorms.push_back({})
@@ -637,6 +656,7 @@ void setup(void)
 	scene.findVerts();
 	scene.genSurfNorms();
 	scene.genVertNorms();
+	scene.genFloorNorms();
 }
 
 // OpenGL window reshape routine.
