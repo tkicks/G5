@@ -375,6 +375,7 @@ void Scene::tiling()
 				glTexCoord2f(0.0, 1.0); glVertex3f(-2.0+i, 1.8+j, -0.8);
 				glTexCoord2f(1.0, 1.0);	glVertex3f(0.0+i, 1.8+j, -0.8);
 				glTexCoord2f(1.0, 0.0); glVertex3f(0.0+i, -0.2+j, -0.8);
+				
 			glEnd();
 		}
 	}
