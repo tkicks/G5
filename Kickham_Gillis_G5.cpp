@@ -2,10 +2,34 @@
 
 Names: Austin Gillis Tyler Kickham
 Program Name: Assignment G5- What You See
-Purpose: 
-Input:	 
+Purpose:	  The purpose is to create a 3D scene that uses textures,
+		 	  lighting and shading to create a realistic visual.  Also
+		 	  allows for .obj manipulation, adding texture to surface
+		 	  of revolution.  The user can use keyboard and mouse
+		 	  interactions to change these effects.
+Input:	 	  The user can use the keyboard to:
+				0: zoom in
+				1: zoom out
+				2: rotate down
+				4: rotate left
+				6: rotate right
+				8: rotate up
+				r: reset scene
+				q: quit
+		 	  or can left click the mouse to elicit a menu to:
+			 	Toggle Textures On/Off
+			 	Toggle Wireframe On/Off
+			 	Turn on Smooth Shading
+			 	Turn on Flat Shading
+			 	Quit
+Output: 	  The user will see a scene that shows Al Capone playing
+			  pong.  Depending on the input the user provides
+			  (described above) the display will change to reflect
+			  their choices.
 
-Output: 
+Notes:		  The bottom portion of Al Capone's face gets culled in
+			  the drawing process.  We attempted playing with the
+			  frustum with no success as well as the LookAt.
 
 */
 
@@ -416,8 +440,6 @@ void Scene::resetImage(char* filename)
 // Drawing routine.
 void drawScene(void)
 {
-
-	
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -488,13 +510,13 @@ void drawScene(void)
 			glPushMatrix();
 				glColor3f(1.0, 1.0, 1.0);
 				glTranslatef(0.0, -0.2, -2.1);
-				glScalef(0.9, 0.9, 0.9);
+				glScalef(1.0, 1.0, 1.0);
 				if (scene.smoothShading)
 					glmDraw(alCapone, GLM_SMOOTH | GLM_MATERIAL);
 				else
 					glmDraw(alCapone, GLM_FLAT | GLM_MATERIAL);
-				glTranslatef(0.0, 0.2, 1.1);
-				glScalef(-0.8, -0.8, -0.8);
+				glTranslatef(0.0, 0.2, 2.1);
+				glScalef(-1.0, -1.0, -1.0);
 			glPopMatrix();
 			glDisable(GL_CULL_FACE);
 
