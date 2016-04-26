@@ -365,42 +365,15 @@ void Scene::disableLighting()
 
 void Scene::tiling()
 {
-	vector <float>sufaceNorms;
-	vector <float>temp;
 	for (float i = 0; i < 4; i += 2)
 	{
 		for (float j = 0; j < 4; j += 2.0)
 		{
 			glBegin(GL_POLYGON);
-				// temp.push_back(-2.0+i, -0.2+j, -0.8);
-				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
-				// temp.clear();
-				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
 				glNormal3f(floorNorms[0],floorNorms[1],floorNorms[2]);
 				glTexCoord2f(0.0, 0.0); glVertex3f(-2.0+i, -0.2+j, -0.8); 
-				
-				// surfaceNorms.push_back({})
-				// sufaceNorms = getNormal(-2.0+i, -1.8+j, -0.8);
-				// temp.push_back(-2.0+i, -1.8+j, -0.8);
-				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
-				// temp.clear();
-				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
 				glTexCoord2f(0.0, 1.0); glVertex3f(-2.0+i, 1.8+j, -0.8);
-				
-				// surfaceNorms.push_back({})
-				// sufaceNorms = getNormal(0.0+i, 1.8+j, -0.8);
-				// temp.push_back(0.0+i, 1.8+j, -0.8);
-				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
-				// temp.clear();
-				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
 				glTexCoord2f(1.0, 1.0);	glVertex3f(0.0+i, 1.8+j, -0.8);
-				
-				// surfaceNorms.push_back({})
-				// sufaceNorms = getNormal(0.0+i, -0.2+j, -0.8);
-				// temp.push_back(0.0+i, -0.2+j, -0.8);
-				// sufaceNorms = getNormal(temp[i][0], temp[i][1], temp[i][2]);
-				// temp.clear();
-				// glNormal3f(sufaceNorms[i][0], sufaceNorms[i][1], sufaceNorms[i][2]);
 				glTexCoord2f(1.0, 0.0); glVertex3f(0.0+i, -0.2+j, -0.8);
 			glEnd();
 		}
@@ -485,7 +458,7 @@ void drawScene(void)
 				glCullFace(GL_FRONT);
 				glTranslatef(0.0, 0.8, 0.0);
 				glScalef(1.2, 1.2, 1.2);
-				glColor3f(0.9, 0.9, 0.9);
+				glColor3f(0.6, 0.8, 1.0);
 				glutSolidCube(3.0);
 				glColor3f(1.0, 1.0, 1.0);
 				glutWireCube(3.0);
