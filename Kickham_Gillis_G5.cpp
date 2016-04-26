@@ -483,8 +483,6 @@ void drawScene(void)
 				glScalef(1.2, 1.2, 1.2);
 				glColor3f(0.6, 0.8, 1.0);
 				glutSolidCube(3.0);
-				glColor3f(1.0, 1.0, 1.0);
-				glutWireCube(3.0);
 				glDisable(GL_CULL_FACE);
 			glPopMatrix();
 
@@ -537,7 +535,7 @@ void drawScene(void)
 					if (scene.smoothShading)
 						gluQuadricNormals(qobj, GLU_SMOOTH);
 					else
-						gluQuadricNormals(qobj, GLM_FLAT);
+						gluQuadricNormals(qobj, GLU_FLAT);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
 				glPushMatrix();
@@ -546,7 +544,7 @@ void drawScene(void)
 					if (scene.smoothShading)
 						gluQuadricNormals(qobj, GLU_SMOOTH);
 					else
-						gluQuadricNormals(qobj, GLM_FLAT);
+						gluQuadricNormals(qobj, GLU_FLAT);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
 				glPushMatrix();
@@ -555,7 +553,7 @@ void drawScene(void)
 					if (scene.smoothShading)
 						gluQuadricNormals(qobj, GLU_SMOOTH);
 					else
-						gluQuadricNormals(qobj, GLM_FLAT);
+						gluQuadricNormals(qobj, GLU_FLAT);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
 				glPushMatrix();
@@ -564,7 +562,7 @@ void drawScene(void)
 					if (scene.smoothShading)
 						gluQuadricNormals(qobj, GLU_SMOOTH);
 					else
-						gluQuadricNormals(qobj, GLM_FLAT);
+						gluQuadricNormals(qobj, GLU_FLAT);
 					gluCylinder(qobj, .1, .1, 0.7, 15.0, 1000.0);
 				glPopMatrix();
 				// glEnable(GL_CULL_FACE);
@@ -602,7 +600,7 @@ void drawScene(void)
 					if (scene.smoothShading)
 						gluQuadricNormals(qobj, GLU_SMOOTH);
 					else
-						gluQuadricNormals(qobj, GLM_FLAT);
+						gluQuadricNormals(qobj, GLU_FLAT);
 					gluSphere(qobj, .1, 15.0, 5.0);
 				glPopMatrix();
 
@@ -765,7 +763,7 @@ int main(int argc, char **argv)
 	printInstructions();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(600, 600);
+	glutInitWindowSize(800, 800);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Al Capone Pong");
 	setup();
