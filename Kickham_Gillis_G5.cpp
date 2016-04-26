@@ -466,31 +466,7 @@ void drawScene(void)
 	glmVertexNormals(alCapone, 100.0);
 
 	// set up for wall/floor texture
-	free(image);	// clear out image?
-	image = glmReadPPM("wallFloor.ppm", &wallFloorWidth, &wallFloorHeight);
-	// image2 = glmReadPPM("fishermen.ppm", &wallFloorWidth, &wallFloorHeight);
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// set parameters for the edges of texture
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// replace polygon with texture (not just cover polygon, in which case
-	// the color of the previous polygon shows through the texture)
-	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
-	
-	// define 
-	glTexImage2D (GL_TEXTURE_2D, 	// target: 2D texture
-		   0,			// level = 0 unless multiple resolutions
-		   GL_RGB,		// internal image format 
-		                        // (see OpenGL text for options)
-		   wallFloorWidth,		// image width
-		   wallFloorHeight,		// image height
-		   0,			// border width (0 or 1;see OpenGL text)
-		   GL_RGB,		// image format (see OpenGL text)
-		   GL_UNSIGNED_BYTE,  	// format of data within image file
-		   image);		// image file
-
-	
+	scene.resetImage("wallFloor.ppm");
 	
 	glPushMatrix();
 		scene.enableLighting();
